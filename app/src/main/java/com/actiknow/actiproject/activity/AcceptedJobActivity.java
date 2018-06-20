@@ -226,6 +226,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
                                     JSONArray jsonArrayAcceptedJobsOld = jsonObj.getJSONArray("accepted_job");
                                     Log.e("AcceptedJobs",""+ jsonArrayAcceptedJobsOld.length());
                                     if (!is_error) {
+                                        acceptedJobsAdapter.notifyDataSetChanged();
                                         /*acceptedjobsList.clear();
                                         JSONArray jsonArrayAcceptedJobs = jsonObj.getJSONArray("accepted_job");
                                         Log.e("AcceptedJobs",""+ jsonArrayAcceptedJobs.length());

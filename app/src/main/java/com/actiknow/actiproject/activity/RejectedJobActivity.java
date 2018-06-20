@@ -233,6 +233,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                                     boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     if (!error) {
+                                        rejectedJobsAdapter.notifyDataSetChanged();
                                         /*rejectedJobsList.clear();
                                         JSONArray jsonArrayRejectedJobs = jsonObj.getJSONArray(AppConfigTags.REJECTED_JOB);
                                         for (int i = 0; i < jsonArrayRejectedJobs.length(); i++) {
