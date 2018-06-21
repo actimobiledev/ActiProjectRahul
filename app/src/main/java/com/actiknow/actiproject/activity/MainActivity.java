@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
       /*  final Handler handler = new Handler();
         final int delay = 20000; //milliseconds
         handler.postDelayed(new Runnable(){
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(this, delay);
             }
         }, delay);
-        super.onResume();*/
+        */
     }
 
     private void initAdapter() {
