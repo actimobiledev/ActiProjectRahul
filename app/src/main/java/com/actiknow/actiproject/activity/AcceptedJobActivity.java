@@ -86,7 +86,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 AcceptedJobs acceptedjobs = acceptedjobsList.get(position);
                 android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-                JobDetailFragment dialog = new JobDetailFragment().newInstance(acceptedjobs.getId(), 1);
+                JobDetailFragment dialog = new JobDetailFragment().newInstance(acceptedjobs.getId(),acceptedjobs.getJob_id(), 1);
                 dialog.show(ft, "jobs");
             }
         });

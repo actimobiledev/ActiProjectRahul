@@ -11,9 +11,12 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -21,14 +24,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.EventLogTags;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.actiknow.actiproject.R;
 import com.actiknow.actiproject.adapter.JobsAdapter;
@@ -79,6 +86,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 public class MainActivity extends AppCompatActivity {
     private AccountHeader headerResult = null;
@@ -98,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
     private Paint p = new Paint();
     private View view;
     DatabaseHandler db;
-
+    int position=0;
+    TextView tvTotalItem;
+    int count = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
         isLogin();
         initDrawer();
     }
+
+
 
     private void initListener() {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -123,7 +135,16 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 Jobs jobs = jobsList.get(position);
                 android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-                JobDetailFragment dialog = new JobDetailFragment().newInstance(jobs.getId(), 0);
+                JobDetailFragment dialog = new JobDetailFragment().newInstance(jobs.getId(), jobs.getJob_id(), 0);
+               dialog.setOnDialogResultListener(new JobDetailFragment.OnDialogResultListener() {
+                   @Override
+                   public void onDismiss() {
+                       jobsList();
+                   }
+               });
+
+
+
                 dialog.show(ft, "jobs");
             }
         });
@@ -150,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         rvJobs = (RecyclerView) findViewById(R.id.rvJobs);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         ivNavigation = (ImageView) findViewById(R.id.ivNavigation);
+        tvTotalItem=(TextView)findViewById(R.id.tvTotalItem);
     }
 
     private void initData() {
@@ -157,12 +179,23 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(true);
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
+
+
+
+
     }
 
     @Override
     protected void onResume() {
-        jobsList();
-        super.onResume();
+      /*  final Handler handler = new Handler();
+        final int delay = 20000; //milliseconds
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                jobsList();
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
+        super.onResume();*/
     }
 
     private void initAdapter() {
@@ -178,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
         rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rvJobs);
+
+       // int count = 0; straightener
+
     }
 
 
@@ -497,8 +533,15 @@ public class MainActivity extends AppCompatActivity {
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
                                                     jsonObjectJobs.getString(AppConfigTags.JOB_URL)));
                                         }
+
+
                                         db.insertAllJobs(jobsList);
                                         jobsAdapter.notifyDataSetChanged();
+                                        if (rvJobs.getAdapter() != null) {
+                                            count = rvJobs.getAdapter().getItemCount();
+
+                                            tvTotalItem.setText(""+count);
+                                        }
                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                         //progressDialog.dismiss();
                                     }
@@ -656,7 +699,7 @@ public class MainActivity extends AppCompatActivity {
                                     boolean error = jsonObj.getBoolean(AppConfigTags.ERROR);
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!error) {
-                                        Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
+                                        Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                         // finish();
                                         // startActivity(getIntent());
                                         jobsList();
@@ -670,16 +713,16 @@ public class MainActivity extends AppCompatActivity {
                                         finish ();
                                         overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);*/
                                     } else {
-                                        Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
+                                        Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                     }
                                     progressDialog.dismiss();
                                 } catch (Exception e) {
                                     progressDialog.dismiss();
-                                    Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                    Utils.showSnackBar2(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace();
                                 }
                             } else {
-                                Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                Utils.showSnackBar2(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
                                 Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
                             progressDialog.dismiss();
@@ -693,7 +736,7 @@ public class MainActivity extends AppCompatActivity {
                             if (response != null && response.data != null) {
                                 Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
                             }
-                            Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                            Utils.showSnackBar2(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
                             progressDialog.dismiss();
                         }
                     }) {
@@ -718,7 +761,7 @@ public class MainActivity extends AppCompatActivity {
             };
             Utils.sendRequest(strRequest1, 60);
         } else {
-            Utils.showSnackBar(this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
+            Utils.showSnackBar2(this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
@@ -728,4 +771,10 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
+
+
+
+
+
 }

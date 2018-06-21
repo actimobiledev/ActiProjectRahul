@@ -18,6 +18,7 @@
     <color name="pie_color_average">#fff</color>
     <color name="pie_color_bad">#fff</color>
     <color name="bg_row_background">#fa315b</color>
+    <color name="green">#388E3C</color>
 
 
     <color name="tab_text_color">#fff</color>

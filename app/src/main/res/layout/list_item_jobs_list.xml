@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:paddingLeft="@dimen/activity_margin">
+            android:padding="@dimen/activity_margin_small">
 
             <RelativeLayout
                 android:id="@+id/rlClientInfo"
@@ -30,7 +30,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:paddingTop="@dimen/activity_margin_small"
+
                     android:text="Title"
                     android:textColor="@color/primary_text"
                     android:textSize="@dimen/text_size_medium"
@@ -61,7 +61,10 @@
                     android:text="Payment Status"
                     android:textColor="@color/secondary_text"
                     android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
 
 
                 <TextView
@@ -73,11 +76,8 @@
                     android:layout_below="@+id/tvStatus"
                     android:layout_gravity="right"
                     android:text="Project Budget"
-                    android:textColor="@color/primary"
                     android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="visible"
-                    android:gravity="right"
-                    android:padding="@dimen/activity_margin_small"
+                    android:visibility="gone"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -89,12 +89,12 @@
                     android:layout_below="@+id/tvBudget"
                     android:layout_gravity="center"
                     android:text="By. Sumit Jhunjhuwala"
-                    android:layout_marginBottom="8dp"
                     android:layout_marginRight="8dp"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/primary"
                     android:textSize="@dimen/text_size_extra_small"
                     android:visibility="gone"
-                    android:gravity="right"/>
+                    android:gravity="right"
+                    android:layout_marginTop="5dp"/>
 
 
             </RelativeLayout>

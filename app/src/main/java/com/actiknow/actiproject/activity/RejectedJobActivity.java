@@ -93,7 +93,7 @@ public class RejectedJobActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 RejectedJobs rejectedJobs = rejectedJobsList.get(position);
                 android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-                JobDetailFragment dialog = new JobDetailFragment().newInstance(rejectedJobs.getId(), 2);
+                JobDetailFragment dialog = new JobDetailFragment().newInstance(rejectedJobs.getId(),rejectedJobs.getJob_id(), 2);
                 dialog.show(ft, "jobs");
 
             }

@@ -62,7 +62,7 @@ public class AppConfigTags {
     public static final String REJECTED_JOB = "rejected_job";
     public static final String ACCEPTED_JOB = "accepted_job";
 
-    public static final String JOB_SKILLS = "job_skills";
+  //  public static final String JOB_SKILLS = "job_skills";
     public static final String SKILL_NAME = "skill_name";
     public static final String REJECTED_BY = "rejected_by";
 

@@ -160,6 +160,22 @@ public class Utils {
         snackbar.show ();
     }
 
+
+    public static void showSnackBar2 (Activity activity, CoordinatorLayout coordinatorLayout, String message, int duration, String button_text, View.OnClickListener onClickListener) {
+        final Snackbar snackbar = Snackbar.make (coordinatorLayout, message, duration);
+        snackbar.setAction (button_text, onClickListener);
+
+        View sbView = snackbar.getView ();
+        sbView.setBackgroundColor (activity.getResources ().getColor (R.color.green));
+        TextView textView = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_text);
+        TextView textView2 = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_action);
+        textView.setTextColor (activity.getResources ().getColor (R.color.tertiary_text));
+        textView2.setTextColor (activity.getResources ().getColor (R.color.tertiary_text));
+        textView.setTypeface (SetTypeFace.getTypeface (activity));
+        textView2.setTypeface (SetTypeFace.getTypeface (activity));
+        snackbar.show ();
+    }
+
     public static void showToast (Activity activity, String message, boolean duration_long) {
         if (duration_long) {
             Toast.makeText (activity, message, Toast.LENGTH_LONG).show ();

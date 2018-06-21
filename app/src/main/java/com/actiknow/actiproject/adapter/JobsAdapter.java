@@ -57,10 +57,15 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         final Jobs jobs = jobsList.get(position);
         progressDialog = new ProgressBar(activity);
         Utils.setTypefaceToAllViews(activity, holder.tvTitle);
-        holder.tvTitle.setText("Jobs : " + jobs.getTitle());
-        holder.tvCountryName.setText("Country : " + jobs.getCountry());
-        holder.tvStatus.setText("Payment Status : " + jobs.getStatus());
-        holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
+        holder.tvTitle.setText(jobs.getTitle());
+        if (jobs.getStatus().length()>0){
+            holder.tvCountryName.setText(jobs.getCountry()+", "+jobs.getStatus()+", "+jobs.getBudget());
+        }
+        else {
+            holder.tvCountryName.setText(jobs.getCountry()+", "+"NA"+", "+jobs.getBudget());
+        }
+        holder.tvStatus.setText(jobs.getSnippet());
+       // holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
 
 
     }

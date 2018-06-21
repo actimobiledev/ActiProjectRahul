@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clMain">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -268,28 +273,47 @@
 
         </RelativeLayout>
 
-
-
-
-
-
-
-
-        <TextView
-            android:id="@+id/tvScan"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
             android:layout_alignParentBottom="true"
+            android:id="@+id/llAcceptedRejected"
             android:layout_marginLeft="@dimen/activity_margin"
-            android:layout_marginRight="@dimen/activity_margin"
-            android:background="@color/primary"
+            android:layout_marginRight="@dimen/activity_margin">
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/tvAccepted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/green"
             android:gravity="center"
             android:padding="@dimen/activity_margin_small"
-            android:text="ADD ITEMS"
+            android:text="ACCEPT"
             android:textColor="@color/text_color_white"
             android:textSize="@dimen/text_size_medium"
             android:textStyle="bold"
             android:layout_marginTop="5dp"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/tvRejected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:padding="@dimen/activity_margin_small"
+                android:text="REJECT"
+                android:textColor="@color/text_color_white"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                android:visibility="visible"
+                android:layout_marginLeft="@dimen/activity_margin_small"/>
+        </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
