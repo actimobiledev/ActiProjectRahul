@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
@@ -142,10 +143,7 @@ public class MainActivity extends AppCompatActivity {
                        jobsList();
                    }
                });
-
-
-
-                dialog.show(ft, "jobs");
+               dialog.show(ft, "jobs");
             }
         });
         ivNavigation.setOnClickListener(new View.OnClickListener() {
@@ -155,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void isLogin() {
         userDetailsPref = UserDetailsPref.getInstance();
         if (userDetailsPref.getStringPref(MainActivity.this, UserDetailsPref.LOGIN_KEY).length() == 0) {
@@ -165,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
-
     private void initView() {
         clMain = (CoordinatorLayout) findViewById(R.id.clMain);
         rvJobs = (RecyclerView) findViewById(R.id.rvJobs);
@@ -173,30 +169,53 @@ public class MainActivity extends AppCompatActivity {
         ivNavigation = (ImageView) findViewById(R.id.ivNavigation);
         tvTotalItem=(TextView)findViewById(R.id.tvTotalItem);
     }
-
     private void initData() {
         db = new DatabaseHandler(MainActivity.this);
         swipeRefreshLayout.setRefreshing(true);
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
+        }
+        @Override
 
 
-
-
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-      /*  final Handler handler = new Handler();
+        final Handler handler = new Handler();
         final int delay = 20000; //milliseconds
         handler.postDelayed(new Runnable(){
             public void run(){
                 jobsList();
+
+                //jobsAdapter.notifyDataSetChanged();
                 handler.postDelayed(this, delay);
+
             }
         }, delay);
-        */
+
+  /*      Thread thread = new Thread() {
+            public void run() {
+                Looper.prepare();
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        jobsList();
+//                        jobsAdapter.notifyDataSetChanged();
+                        handler.removeCallbacks(this);
+                        Looper.myLooper().quit();
+                    }
+                }, 2000);
+
+                Looper.loop();
+            }
+        };
+        thread.start();
+*/
+
+
+
+
     }
 
     private void initAdapter() {
@@ -501,9 +520,9 @@ public class MainActivity extends AppCompatActivity {
     public void jobsList() {
         swipeRefreshLayout.setRefreshing(true);
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
-            jobsList.clear();
+
             Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS, true);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
             StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS,
                     new Response.Listener<String>() {
@@ -513,6 +532,7 @@ public class MainActivity extends AppCompatActivity {
                             Utils.showLog(Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
                             if (response != null) {
                                 db.deleteAllJobs();
+                                jobsList.clear();
                                 try {
                                     JSONObject jsonObj = new JSONObject(response);
                                     boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
@@ -534,7 +554,6 @@ public class MainActivity extends AppCompatActivity {
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
                                                     jsonObjectJobs.getString(AppConfigTags.JOB_URL)));
                                         }
-
 
                                         db.insertAllJobs(jobsList);
                                         jobsAdapter.notifyDataSetChanged();
@@ -594,6 +613,89 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(dialogIntent);
                 }
             });
+        }
+    }
+
+    public void jobsListHandler() {
+        if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
+            //jobsList.clear();
+            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS, true);
+//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            userDetailsPref.putStringPref(MainActivity.this, UserDetailsPref.RESPONSE, response);
+                            Utils.showLog(Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                db.deleteAllJobs();
+                                jobsList.clear();
+                                try {
+                                    JSONObject jsonObj = new JSONObject(response);
+                                    boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
+                                    String message = jsonObj.getString(AppConfigTags.MESSAGE);
+                                    if (!is_error) {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                        JSONArray jsonArrayJobs = jsonObj.getJSONArray(AppConfigTags.JOBS);
+                                        for (int i = 0; i < jsonArrayJobs.length(); i++) {
+                                            JSONObject jsonObjectJobs = jsonArrayJobs.getJSONObject(i);
+                                            jobsList.add(new Jobs(jsonObjectJobs.getInt(AppConfigTags.ID),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_ID),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_TITLE),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_BUDGET),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_SNIPPET),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_COUNTRY),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_SKILL),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
+                                                    jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
+                                                    jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL)));
+                                        }
+
+                                        db.insertAllJobs(jobsList);
+                                        jobsAdapter.notifyDataSetChanged();
+                                        if (rvJobs.getAdapter() != null) {
+                                            count = rvJobs.getAdapter().getItemCount();
+                                            tvTotalItem.setText(""+count);
+                                        }
+                                        }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Utils.showLog(Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString(), true);
+                            NetworkResponse response = error.networkResponse;
+                            if (response != null && response.data != null) {
+                                Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
+                            }
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new Hashtable<String, String>();
+                    Utils.showLog(Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    UserDetailsPref userDetailsPref = UserDetailsPref.getInstance();
+                    params.put(AppConfigTags.HEADER_API_KEY, Constants.api_key);
+                    params.put(AppConfigTags.HEADER_USER_LOGIN_KEY, userDetailsPref.getStringPref(MainActivity.this, UserDetailsPref.LOGIN_KEY));
+                    Utils.showLog(Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
+                    return params;
+                }
+            };
+            Utils.sendRequest(strRequest, 30);
         }
     }
 

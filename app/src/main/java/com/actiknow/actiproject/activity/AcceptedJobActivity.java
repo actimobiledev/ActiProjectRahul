@@ -104,7 +104,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
         clMain = (CoordinatorLayout) findViewById(R.id.clMain);
         rvJobs = (RecyclerView) findViewById(R.id.rvJobs);
         ivBack = (ImageView) findViewById(R.id.ivBack);
-        swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
+        //swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
     }
     private void initData() {
        // swipeRefreshLayout.setRefreshing(true);

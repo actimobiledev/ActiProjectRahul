@@ -52,7 +52,6 @@ public class RejectedJobActivity extends AppCompatActivity {
     UserDetailsPref userDetailsPref;
     CoordinatorLayout clMain;
     RejectedJobsAdapter rejectedJobsAdapter;
-
     ProgressDialog progressDialog;
     ImageView ivBack;
     String arrayResponse;
@@ -70,7 +69,6 @@ public class RejectedJobActivity extends AppCompatActivity {
         initListener();
     
     }
-
     private void initListener() {
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,15 +97,11 @@ public class RejectedJobActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
     private void initView() {
         clMain = (CoordinatorLayout) findViewById(R.id.clMain);
         rvJobs = (RecyclerView) findViewById(R.id.rvJobs);
         ivBack = (ImageView) findViewById(R.id.ivBack);
     }
-
     private void initData() {
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
@@ -152,10 +146,10 @@ public class RejectedJobActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Utils.showSnackBar(RejectedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                Utils.showSnackBar2(RejectedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
             }
         } else {
-            Utils.showSnackBar(RejectedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+            Utils.showSnackBar2(RejectedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
             Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
         }
     }
@@ -261,17 +255,17 @@ public class RejectedJobActivity extends AppCompatActivity {
                                         rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
                                         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
                                         itemTouchHelper.attachToRecyclerView(rvJobs);*/
-                                        Utils.showSnackBar (RejectedJobActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                                        Utils.showSnackBar2 (RejectedJobActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
 
                                     }
                                     progressDialog.dismiss ();
                                 } catch (Exception e) {
                                     progressDialog.dismiss ();
-                                    Utils.showSnackBar (RejectedJobActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                                    Utils.showSnackBar2 (RejectedJobActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                     e.printStackTrace ();
                                 }
                             } else {
-                                Utils.showSnackBar (RejectedJobActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                                Utils.showSnackBar2 (RejectedJobActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                                 Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
                             progressDialog.dismiss ();
@@ -285,7 +279,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                             if (response != null && response.data != null) {
                                 Utils.showLog (Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
                             }
-                            Utils.showSnackBar (RejectedJobActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                            Utils.showSnackBar2 (RejectedJobActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
                             progressDialog.dismiss ();
                         }
                     }) {
@@ -310,7 +304,7 @@ public class RejectedJobActivity extends AppCompatActivity {
             };
             Utils.sendRequest (strRequest1, 60);
         } else {
-            Utils.showSnackBar (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
+            Utils.showSnackBar2 (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
                 @Override
                 public void onClick (View v) {
                     Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
