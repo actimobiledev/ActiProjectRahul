@@ -9,6 +9,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
@@ -23,6 +24,7 @@ import com.actiknow.actiproject.utils.AppConfigTags;
 import com.actiknow.actiproject.utils.AppConfigURL;
 import com.actiknow.actiproject.utils.Constants;
 import com.actiknow.actiproject.utils.NetworkConnection;
+import com.actiknow.actiproject.utils.SetTypeFace;
 import com.actiknow.actiproject.utils.TypefaceSpan;
 import com.actiknow.actiproject.utils.UserDetailsPref;
 import com.actiknow.actiproject.utils.Utils;
@@ -42,11 +44,12 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvUsername;
     EditText etUserName;
     TextView tvPassword;
+    TextView  tvShowHide;;
     EditText etPassword;
     TextView tvForgotPassword;
     UserDetailsPref userDetailsPref;
     ProgressDialog progressDialog;
-    ImageView ivNext;
+    TextView tvLogin;
     CoordinatorLayout clMain;
 
     @Override
@@ -65,13 +68,33 @@ public class LoginActivity extends AppCompatActivity {
         clMain = (CoordinatorLayout) findViewById(R.id.clMain);
         tvUsername = (TextView) findViewById(R.id.tvUserName);
         tvForgotPassword = (TextView) findViewById(R.id.tvForgotPassword);
-        etUserName = (EditText) findViewById(R.id.etUserName);
-        tvPassword = (TextView) findViewById(R.id.tvPassword);
+        etUserName = (EditText) findViewById(R.id.tvUserName);
+        tvShowHide = (TextView) findViewById(R.id.tvShowHide);
         etPassword = (EditText) findViewById(R.id.etPassword);
-        ivNext = (ImageView) findViewById(R.id.ivNext);
+        tvLogin = (TextView) findViewById(R.id.tvLogin);
     }
     private void initListener() {
-        ivNext.setOnClickListener(new View.OnClickListener() {
+        tvShowHide.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+                if (tvShowHide.getText ().toString ().equalsIgnoreCase ("SHOW")) {
+                    tvShowHide.setText ("HIDE");
+                    etPassword.setInputType (InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    etPassword.setSelection (etPassword.getText ().length ());
+                    etPassword.setTypeface (SetTypeFace.getTypeface (LoginActivity.this));
+                } else {
+                    etPassword.setInputType (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    etPassword.setSelection (etPassword.getText ().length ());
+                    etPassword.setTypeface (SetTypeFace.getTypeface (LoginActivity.this));
+                    tvShowHide.setText ("SHOW");
+                }
+            }
+        });
+
+
+
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SpannableString s1 = new SpannableString(getResources().getString(R.string.please_enter_email));

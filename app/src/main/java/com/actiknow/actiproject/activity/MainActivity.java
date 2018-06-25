@@ -109,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHandler db;
     int position=0;
     TextView tvTotalItem;
+    TextView tvTotalJobs;
     int count = 0;
+    final Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         initListener();
         isLogin();
         initDrawer();
+        jobsList();
     }
 
 
@@ -168,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         ivNavigation = (ImageView) findViewById(R.id.ivNavigation);
         tvTotalItem=(TextView)findViewById(R.id.tvTotalItem);
+        tvTotalJobs=(TextView)findViewById(R.id.tvTotalJobs);
     }
     private void initData() {
         db = new DatabaseHandler(MainActivity.this);
@@ -180,11 +184,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        final Handler handler = new Handler();
+
         final int delay = 20000; //milliseconds
         handler.postDelayed(new Runnable(){
             public void run(){
-                jobsList();
+                jobsListHandler();
 
                 //jobsAdapter.notifyDataSetChanged();
                 handler.postDelayed(this, delay);
@@ -192,30 +196,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }, delay);
 
-  /*      Thread thread = new Thread() {
-            public void run() {
-                Looper.prepare();
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        jobsList();
-//                        jobsAdapter.notifyDataSetChanged();
-                        handler.removeCallbacks(this);
-                        Looper.myLooper().quit();
-                    }
-                }, 2000);
-
-                Looper.loop();
-            }
-        };
-        thread.start();
-*/
 
 
+    }
 
-
+    protected void onPause() {
+        Log.d("onstop","onstop");
+        handler.removeCallbacksAndMessages(null);
+        super.onPause();
     }
 
     private void initAdapter() {
@@ -552,8 +540,17 @@ public class MainActivity extends AppCompatActivity {
                                                     jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL)));
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT)
+
+                                            ));
                                         }
+                                        tvTotalJobs.setText("Total no. of jobs : "+jobsList.size());
 
                                         db.insertAllJobs(jobsList);
                                         jobsAdapter.notifyDataSetChanged();
@@ -650,7 +647,15 @@ public class MainActivity extends AppCompatActivity {
                                                     jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL)));
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT)
+
+                                            ));
                                         }
 
                                         db.insertAllJobs(jobsList);

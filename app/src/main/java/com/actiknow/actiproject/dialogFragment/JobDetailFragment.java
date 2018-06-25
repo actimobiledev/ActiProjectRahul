@@ -67,6 +67,11 @@ public class JobDetailFragment extends DialogFragment {
     OnDialogResultListener onDialogResultListener;
     int val;
     LinearLayout llAcceptedRejected;
+    TextView tvJobPosted2;
+    TextView tvJobFilled;
+    TextView tvTotalHour;
+    TextView tvTotalSpent;
+    TextView tvMemberSince;
 
     public JobDetailFragment newInstance(int id, String job_id, int val) {
         JobDetailFragment f = new JobDetailFragment();
@@ -150,6 +155,13 @@ public class JobDetailFragment extends DialogFragment {
         tvAccept = (TextView) root.findViewById(R.id.tvAccepted);
         tvReject = (TextView) root.findViewById(R.id.tvRejected);
         clMain = (CoordinatorLayout) root.findViewById(R.id.clMain);
+
+        tvJobPosted2 = (TextView)root.findViewById(R.id.tvJobPosted2);
+        tvJobFilled = (TextView) root.findViewById(R.id.tvJobFilled);
+        tvTotalHour = (TextView) root.findViewById(R.id.tvTotalHour);
+        tvTotalSpent = (TextView) root.findViewById(R.id.tvTotalSpent);
+        tvMemberSince = (TextView) root.findViewById(R.id.tvMemberSince);
+
         llAcceptedRejected = (LinearLayout) root.findViewById(R.id.llAcceptedRejected);
     }
 
@@ -158,6 +170,9 @@ public class JobDetailFragment extends DialogFragment {
         id = bundle.getInt(AppConfigTags.ID);
         job_id = bundle.getString(AppConfigTags.JOB_ID);
         value = bundle.getInt("value");
+        Log.d("id",""+id);
+        Log.d("job_id",""+job_id);
+        Log.d("value",""+value);
     }
 
     private void initData() {
@@ -228,10 +243,16 @@ public class JobDetailFragment extends DialogFragment {
                             tvPaymentStatus.setText("Payment Status : " + jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS));
                             tvBudget.setText("Job Budget       : " + jsonObjectJobs.getString(AppConfigTags.JOB_BUDGET));
                             tvUrl.setText(jsonObjectJobs.getString(AppConfigTags.JOB_URL));
-                            tvJobPosted.setText("Job Posted : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POSTED));
-                            tvJobHired.setText("Job Hire      : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POST_HIRES));
+                            tvJobPosted.setText("Job Posted : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POSTED)+"  |  ");
+                            tvJobHired.setText("Job Hire  : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POST_HIRES));
                             tvJobSnippet.setText("Job Posted: " + jsonObjectJobs.getString(AppConfigTags.JOB_SNIPPET));
-                            tvSkills.setText("Skills:   " + jsonObjectJobs.getString(AppConfigTags.JOB_SKILL));
+                            tvSkills.setText(jsonObjectJobs.getString(AppConfigTags.JOB_SKILL));
+
+                            tvJobPosted2.setText("Job Posted : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED)+"  |  ");
+                            tvJobFilled.setText("Job Filled : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED)+"  |  "+jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT));
+                            tvTotalHour.setText("Hours : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS)+"  |  ");
+                            tvTotalSpent.setText("Spent : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT));
+                            tvMemberSince.setText(jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE));
                             url = jsonObjectJobs.getString(AppConfigTags.JOB_URL);
                         }
                     }
@@ -247,12 +268,19 @@ public class JobDetailFragment extends DialogFragment {
                             tvCountryName.setText("Country Name  : " + jsonObjectJobs.getString(AppConfigTags.JOB_COUNTRY));
                             tvPaymentStatus.setText("Payment Status : " + jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS));
                             tvBudget.setText("Job Budget       : " + jsonObjectJobs.getString(AppConfigTags.JOB_BUDGET));
-                            tvUrl.setText("Job URL      : " + jsonObjectJobs.getString(AppConfigTags.JOB_URL));
-                            tvJobPosted.setText("Job Posted : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POSTED));
-                            tvJobHired.setText("Job Hire      : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POST_HIRES));
+                            tvUrl.setText(jsonObjectJobs.getString(AppConfigTags.JOB_URL));
+                            tvJobPosted.setText("Job Posted : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POSTED)+"  |  ");
+                            tvJobHired.setText("Job Hire  : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POST_HIRES));
                             tvJobSnippet.setText("Job Posted: " + jsonObjectJobs.getString(AppConfigTags.JOB_SNIPPET));
-                            tvSkills.setText("Skills:   " + jsonObjectJobs.getString(AppConfigTags.JOB_SKILL));
+                            tvSkills.setText(jsonObjectJobs.getString(AppConfigTags.JOB_SKILL));
                             url = jsonObjectJobs.getString(AppConfigTags.JOB_URL);
+                            tvJobPosted2.setText("Job Posted : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED)+"  |  ");
+                            tvJobFilled.setText("Job Filled : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED)+"  |  "+jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT));
+                            tvTotalHour.setText("Hours : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS)+"  |  ");
+                            tvTotalSpent.setText("Spent : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT));
+                            tvMemberSince.setText(jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE));
+
+
                         }
 
                     }
@@ -267,12 +295,19 @@ public class JobDetailFragment extends DialogFragment {
                             tvCountryName.setText("Country Name  : " + jsonObjectJobs.getString(AppConfigTags.JOB_COUNTRY));
                             tvPaymentStatus.setText("Payment Status : " + jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS));
                             tvBudget.setText("Job Budget       : " + jsonObjectJobs.getString(AppConfigTags.JOB_BUDGET));
-                            tvUrl.setText("Job URL      : " + jsonObjectJobs.getString(AppConfigTags.JOB_URL));
-                            tvJobPosted.setText("Job Posted : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POSTED));
-                            tvJobHired.setText("Job Hire      : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POST_HIRES));
+                            tvUrl.setText(jsonObjectJobs.getString(AppConfigTags.JOB_URL));
+                            tvJobPosted.setText("Job Posted : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POSTED)+"  |  ");
+                            tvJobHired.setText("Job Hire  : " + jsonObjectJobs.getString(AppConfigTags.JOB_JOB_POST_HIRES));
                             tvJobSnippet.setText("Job Posted: " + jsonObjectJobs.getString(AppConfigTags.JOB_SNIPPET));
-                            tvSkills.setText("Skills:   " + jsonObjectJobs.getString(AppConfigTags.JOB_SKILL));
+                            tvSkills.setText(jsonObjectJobs.getString(AppConfigTags.JOB_SKILL));
                             url = jsonObjectJobs.getString(AppConfigTags.JOB_URL);
+                            tvJobPosted2.setText("Job Posted : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED)+"  |  ");
+                            tvJobFilled.setText("Job Filled : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED)+"  |  "+jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT));
+                            tvTotalHour.setText("Hours : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS)+"  |  ");
+                            tvTotalSpent.setText("Spent : "+jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT));
+                            tvMemberSince.setText(jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE));
+
+
                         }
 
                     }

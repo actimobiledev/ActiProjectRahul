@@ -32,7 +32,7 @@
                     android:layout_alignParentStart="true"
 
                     android:text="Title"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/text_color_black"
                     android:textSize="@dimen/text_size_medium"
                     android:visibility="visible"
                     android:paddingBottom="5dp"/>
@@ -46,7 +46,7 @@
                     android:layout_below="@+id/tvTitle"
                     android:layout_gravity="center"
                     android:text="Country Name"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/primary"
                     android:textSize="@dimen/text_size_extra_small"
                     android:visibility="visible" />
 
@@ -61,24 +61,80 @@
                     android:text="Payment Status"
                     android:textColor="@color/secondary_text"
                     android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:layout_marginTop="@dimen/activity_margin_extra_small"/>
 
 
                 <TextView
-                    android:id="@+id/tvBudget"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tvJobPosted"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvStatus"
                     android:layout_gravity="right"
-                    android:text="Project Budget"
+                    android:text="JobPosted"
                     android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="gone"
-                    android:textStyle="bold"/>
+                    android:visibility="visible"
+                    android:textColor="@color/secondary_text"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+
+
+
+                <TextView
+                    android:id="@+id/tvJobFilled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvStatus"
+                    android:text="JobFilled"
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible"
+                    android:textColor="@color/secondary_text"
+                    android:layout_toRightOf="@+id/tvJobPosted"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+
+
+                <TextView
+                    android:id="@+id/tvTotalHour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/tvJobPosted"
+                    android:layout_gravity="right"
+                    android:text="Total hours"
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible"
+                    android:textColor="@color/secondary_text"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+
+
+
+                <TextView
+                    android:id="@+id/tvTotalSpent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvJobPosted"
+                    android:text="Total Spent"
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible"
+                    android:textColor="@color/secondary_text"
+                    android:layout_toRightOf="@+id/tvTotalHour"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+
+
+                <TextView
+                    android:id="@+id/tvMemberSince"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvTotalHour"
+                    android:text="Member Since"
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible"
+                    android:textColor="@color/secondary_text"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
 
                 <TextView
                     android:id="@+id/tvRejectedBy"
@@ -86,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@+id/tvBudget"
+                    android:layout_below="@+id/tvMemberSince"
                     android:layout_gravity="center"
                     android:text="By. Sumit Jhunjhuwala"
                     android:layout_marginRight="8dp"
@@ -98,15 +154,6 @@
 
 
             </RelativeLayout>
-
-
-
-
-
-
-
-
-
         </RelativeLayout>
 
 

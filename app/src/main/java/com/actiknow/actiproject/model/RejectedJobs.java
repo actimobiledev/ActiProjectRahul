@@ -6,9 +6,10 @@ package com.actiknow.actiproject.model;
 
 public class RejectedJobs {
     int id,job_post,job_hire;
-    String job_id,title,snippet,country,skill,status,budget,job_url,rejected_by;
+    String job_id,title,snippet,country,skill,status,budget,job_url,rejected_by,total_job_posted,total_spent,total_job_filled,client_member_since,total_hours,client_job_percent;
 
-    public RejectedJobs(int id, String job_id, String title, String budget , String snippet, String country, String skill, String status , int job_post, int job_hire, String job_url, String rejected_by) {
+    public RejectedJobs(int id, String job_id, String title, String budget , String snippet, String country, String skill, String status , int job_post, int job_hire, String job_url, String rejected_by,
+                        String total_job_posted,String total_spent,String total_job_filled,String client_member_since,String total_hours,String client_job_percent){
         this.id = id;
         this.job_id = job_id;
         this.title = title;
@@ -21,6 +22,12 @@ public class RejectedJobs {
         this.job_hire = job_hire;
         this.job_url = job_url;
         this.rejected_by = rejected_by;
+        this.total_job_posted = total_job_posted;
+        this.total_spent = total_spent;
+        this.total_job_filled = total_job_filled;
+        this.client_member_since = client_member_since;
+        this.total_hours = total_hours;
+        this.client_job_percent = client_job_percent;
     }
 
     public String getSkill() {
@@ -117,6 +124,54 @@ public class RejectedJobs {
 
     public void setJob_hire(int job_hire) {
         this.job_hire = job_hire;
+    }
+
+    public String getTotal_job_posted() {
+        return total_job_posted;
+    }
+
+    public void setTotal_job_posted(String total_job_posted) {
+        this.total_job_posted = total_job_posted;
+    }
+
+    public String getTotal_spent() {
+        return total_spent;
+    }
+
+    public void setTotal_spent(String total_spent) {
+        this.total_spent = total_spent;
+    }
+
+    public String getTotal_job_filled() {
+        return total_job_filled;
+    }
+
+    public void setTotal_job_filled(String total_job_filled) {
+        this.total_job_filled = total_job_filled;
+    }
+
+    public String getClient_member_since() {
+        return client_member_since;
+    }
+
+    public void setClient_member_since(String client_member_since) {
+        this.client_member_since = client_member_since;
+    }
+
+    public String getTotal_hours() {
+        return total_hours;
+    }
+
+    public void setTotal_hours(String total_hours) {
+        this.total_hours = total_hours;
+    }
+
+    public String getClient_job_percent() {
+        return client_job_percent;
+    }
+
+    public void setClient_job_percent(String client_job_percent) {
+        this.client_job_percent = client_job_percent;
     }
 }
 

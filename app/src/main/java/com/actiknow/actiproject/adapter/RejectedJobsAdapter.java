@@ -53,6 +53,11 @@ public class RejectedJobsAdapter extends RecyclerView.Adapter<RejectedJobsAdapte
         holder.tvRejectedBy.setVisibility(View.VISIBLE);
         holder.tvRejectedBy.setText("By : " + jobs.getRejected_by());
 
+        holder.tvJobPosted.setText("Job Posted : "+jobs.getJob_post()+"  |  ");
+        holder.tvJobFilled.setText("Job Filled : "+jobs.getTotal_job_filled()+"  |  "+jobs.getClient_job_percent());
+        holder.tvTotalHour.setText("Total Hours : "+jobs.getTotal_hours()+"  |  ");
+        holder.tvTotalSpent.setText("Spent Hours : "+jobs.getTotal_spent());
+        holder.tvMemberSince.setText(jobs.getClient_member_since());
 
 
     }
@@ -90,6 +95,12 @@ public class RejectedJobsAdapter extends RecyclerView.Adapter<RejectedJobsAdapte
         TextView tvStatus;
         TextView tvBudget;
         TextView tvRejectedBy;
+        TextView tvJobPosted;
+        TextView tvJobFilled;
+        TextView tvTotalHour;
+        TextView tvTotalSpent;
+        TextView tvMemberSince;
+
         public RelativeLayout rlMain;
 
         ProgressBar progressBar;
@@ -102,6 +113,11 @@ public class RejectedJobsAdapter extends RecyclerView.Adapter<RejectedJobsAdapte
             tvBudget = (TextView) view.findViewById(R.id.tvBudget);
             tvRejectedBy = (TextView) view.findViewById(R.id.tvRejectedBy);
             rlMain = (RelativeLayout) view.findViewById(R.id.rlMain);
+            tvJobPosted = (TextView) view.findViewById(R.id.tvJobPosted);
+            tvJobFilled = (TextView) view.findViewById(R.id.tvJobFilled);
+            tvTotalHour = (TextView) view.findViewById(R.id.tvTotalHour);
+            tvTotalSpent = (TextView) view.findViewById(R.id.tvTotalSpent);
+            tvMemberSince = (TextView) view.findViewById(R.id.tvMemberSince);
             view.setOnClickListener(this);
         }
 

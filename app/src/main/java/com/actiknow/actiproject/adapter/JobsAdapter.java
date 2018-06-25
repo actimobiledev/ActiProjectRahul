@@ -67,6 +67,11 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         holder.tvStatus.setText(jobs.getSnippet());
        // holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
 
+        holder.tvJobPosted.setText("Job Posted : "+jobs.getJob_post()+"  |  ");
+        holder.tvJobFilled.setText("Job Filled : "+jobs.getTotal_job_filled()+"  |  "+jobs.getClient_job_percent());
+        holder.tvTotalHour.setText("Hours : "+jobs.getTotal_hours()+"  |  ");
+        holder.tvTotalSpent.setText("Spent : "+jobs.getTotal_spent());
+        holder.tvMemberSince.setText(jobs.getClient_member_since());
 
     }
 
@@ -101,7 +106,15 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         TextView tvTitle;
         TextView tvCountryName;
         TextView tvStatus;
-        TextView tvBudget;
+     //   TextView tvBudget;
+
+        TextView tvJobPosted;
+        TextView tvJobFilled;
+        TextView tvTotalHour;
+        TextView tvTotalSpent;
+        TextView tvMemberSince;
+
+
         public RelativeLayout rlMain;
 
         ProgressBar progressBar;
@@ -111,7 +124,13 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
             tvTitle = (TextView) view.findViewById(R.id.tvTitle);
             tvCountryName = (TextView) view.findViewById(R.id.tvCountryName);
             tvStatus = (TextView) view.findViewById(R.id.tvStatus);
-            tvBudget = (TextView) view.findViewById(R.id.tvBudget);
+         //   tvBudget = (TextView) view.findViewById(R.id.tvBudget);
+
+            tvJobPosted = (TextView) view.findViewById(R.id.tvJobPosted);
+            tvJobFilled = (TextView) view.findViewById(R.id.tvJobFilled);
+            tvTotalHour = (TextView) view.findViewById(R.id.tvTotalHour);
+            tvTotalSpent = (TextView) view.findViewById(R.id.tvTotalSpent);
+            tvMemberSince = (TextView) view.findViewById(R.id.tvMemberSince);
             rlMain = (RelativeLayout) view.findViewById(R.id.rlMain);
             view.setOnClickListener(this);
         }

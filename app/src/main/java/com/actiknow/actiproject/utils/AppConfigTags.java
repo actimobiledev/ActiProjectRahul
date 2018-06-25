@@ -49,6 +49,16 @@ public class AppConfigTags {
     public static final String JOB_JOB_POST_HIRES = "job_past_hires";
     public static final String JOB_PAYMENT_VERIFICATION_STATUS = "job_payment_verification_status";
 
+    public static final String CLIENT_TOTAL_JOB_POSTED = "client_total_job_posted";
+    public static final String CLIENT_TOTAL_SPENT = "client_total_spent";
+    public static final String CLIENT_TOTAL_JOB_FILLED = "client_total_job_filled";
+    public static final String CLIENT_MEMBER_SINCE = "client_member_since";
+    public static final String CLIENT_TOTAL_HOURS = "client_total_hours";
+    public static final String CLIENT_JOB_PERCENT = "client_job_percent";
+
+
+
+
 
     public static final String ATTRIBUTE_ID = "attribute_id";
     public static final String STATUS_TEXT = "status_text";
@@ -65,6 +75,7 @@ public class AppConfigTags {
   //  public static final String JOB_SKILLS = "job_skills";
     public static final String SKILL_NAME = "skill_name";
     public static final String REJECTED_BY = "rejected_by";
+
 
 }
 

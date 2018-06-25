@@ -47,6 +47,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String JOB_URL = "job_url";
 
 
+    public static final String CLIENT_TOTAL_JOB_POSTED = "client_total_job_posted";
+    public static final String CLIENT_TOTAL_SPENT = "client_total_spent";
+    public static final String CLIENT_TOTAL_JOB_FILLED = "client_total_job_filled";
+    public static final String CLIENT_MEMBER_SINCE = "client_member_since";
+    public static final String CLIENT_TOTAL_HOURS = "client_total_hours";
+    public static final String CLIENT_JOB_PERCENT = "client_job_percent";
+
+
+
     // Notes table Create Statements
     private static final String CREATE_TABLE_JOBS = "CREATE TABLE "
             + TABLE_JOBS + "(" +
@@ -61,7 +70,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             JOB_PAYMENT_VERIFICATION_STATUS + " TEXT," +
             JOB_JOB_POSTED + " INTEGER," +
             JOB_JOB_POST_HIRES + " INTEGER," +
-            JOB_URL + " TEXT" + ")";
+            JOB_URL + " TEXT,"+
+            CLIENT_TOTAL_JOB_POSTED + " TEXT,"+
+            CLIENT_TOTAL_SPENT + " TEXT,"+
+            CLIENT_TOTAL_JOB_FILLED + " TEXT,"+
+            CLIENT_MEMBER_SINCE + " TEXT,"+
+            CLIENT_TOTAL_HOURS + " TEXT,"+
+            CLIENT_JOB_PERCENT + " TEXT" + ")";
 
 
     // Notes table Create Statements
@@ -143,7 +158,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         c.getString ((c.getColumnIndex (JOB_PAYMENT_VERIFICATION_STATUS))),
                         c.getInt ((c.getColumnIndex (JOB_JOB_POSTED))),
                         c.getInt ((c.getColumnIndex (JOB_JOB_POST_HIRES))),
-                        c.getString ((c.getColumnIndex (JOB_URL)))
+                        c.getString ((c.getColumnIndex (JOB_URL))),
+                        c.getString ((c.getColumnIndex (CLIENT_TOTAL_JOB_POSTED))),
+                        c.getString ((c.getColumnIndex (CLIENT_TOTAL_SPENT))),
+                        c.getString ((c.getColumnIndex (CLIENT_TOTAL_JOB_FILLED))),
+                        c.getString ((c.getColumnIndex (CLIENT_MEMBER_SINCE))),
+                        c.getString ((c.getColumnIndex (CLIENT_TOTAL_HOURS))),
+                        c.getString ((c.getColumnIndex (CLIENT_JOB_PERCENT)))
 
                 );
                 jobList.add (jobs);

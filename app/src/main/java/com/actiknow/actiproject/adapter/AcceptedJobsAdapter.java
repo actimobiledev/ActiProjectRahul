@@ -50,6 +50,12 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
         holder.tvStatus.setText(jobs.getSnippet());
      //   holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
 
+        holder.tvJobPosted.setText("Job Posted : "+jobs.getJob_post()+"  |  ");
+        holder.tvJobFilled.setText("Job Filled : "+jobs.getTotal_job_filled()+"  |  "+jobs.getClient_job_percent());
+        holder.tvTotalHour.setText("Hours : "+jobs.getTotal_hours()+"  |  ");
+        holder.tvTotalSpent.setText("Hours : "+jobs.getTotal_spent());
+        holder.tvMemberSince.setText(jobs.getClient_member_since());
+
 
     }
 
@@ -87,6 +93,12 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
         TextView tvBudget;
         public RelativeLayout rlMain;
 
+        TextView tvJobPosted;
+        TextView tvJobFilled;
+        TextView tvTotalHour;
+        TextView tvTotalSpent;
+        TextView tvMemberSince;
+
         ProgressBar progressBar;
 
         public ViewHolder(View view) {
@@ -96,6 +108,11 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
             tvStatus = (TextView) view.findViewById(R.id.tvStatus);
             tvBudget = (TextView) view.findViewById(R.id.tvBudget);
             rlMain = (RelativeLayout) view.findViewById(R.id.rlMain);
+            tvJobPosted = (TextView) view.findViewById(R.id.tvJobPosted);
+            tvJobFilled = (TextView) view.findViewById(R.id.tvJobFilled);
+            tvTotalHour = (TextView) view.findViewById(R.id.tvTotalHour);
+            tvTotalSpent = (TextView) view.findViewById(R.id.tvTotalSpent);
+            tvMemberSince = (TextView) view.findViewById(R.id.tvMemberSince);
             view.setOnClickListener(this);
         }
 
