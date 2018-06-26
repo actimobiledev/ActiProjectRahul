@@ -65,6 +65,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private boolean isPositionFooter (int position) {
         return position == jobsList.size ();
     }
+
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         /*final LayoutInflater mInflater = LayoutInflater.from(parent.getContext());

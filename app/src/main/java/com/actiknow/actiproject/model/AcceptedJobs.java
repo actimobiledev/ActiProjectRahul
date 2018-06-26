@@ -8,7 +8,10 @@ public class AcceptedJobs {
     int id,job_post,job_hire;
     String job_id,title,snippet,country,skill,status,budget,job_url,total_job_posted,total_spent,total_job_filled,client_member_since,total_hours,client_job_percent;
 
-    public AcceptedJobs(int id, String job_id, String title, String budget , String snippet, String country, String skill, String status , int job_post, int job_hire, String job_url,String total_job_posted,String total_spent,String total_job_filled,String client_member_since,String total_hours,String client_job_percent) {
+    public AcceptedJobs() {
+    }
+
+    public AcceptedJobs(int id, String job_id, String title, String budget , String snippet, String country, String skill, String status , int job_post, int job_hire, String job_url, String total_job_posted, String total_spent, String total_job_filled, String client_member_since, String total_hours, String client_job_percent) {
         this.id = id;
         this.job_id = job_id;
         this.title = title;

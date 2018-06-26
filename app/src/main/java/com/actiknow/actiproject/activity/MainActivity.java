@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rvJobs);
+
         jobsAdapter.setLoadMoreListener(new JobsAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -512,6 +513,7 @@ public class MainActivity extends AppCompatActivity {
                                     boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!is_error) {
+
                                         Log.e("JobList", "" + jobsList.size());
                                         if (offset > 0) {
                                             jobsList.remove(jobsList.size() - 1);

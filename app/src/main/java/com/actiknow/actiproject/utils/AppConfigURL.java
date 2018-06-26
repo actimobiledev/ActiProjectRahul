@@ -15,5 +15,9 @@ public class AppConfigURL {
     public static String ACCEPT_REJECTED_JOB= BASE_URL+"accept_rejected_job";
     public static String REJECTED_JOBS= BASE_URL+"rejected_jobs";
     public static String ACCEPTED_JOBS= BASE_URL+"accepted_jobs";
+    public static String ACCEPTED_JOBS2= BASE_URL+"accepted_jobs2";
+    public static String REJECTED_JOBS2= BASE_URL+"rejected_jobs2";
+    public static String ACCEPTED_JOB_IDS= BASE_URL+"accepted_job_ids";
+    public static String REJECTED_JOB_IDS= BASE_URL+"rejected_job_ids";
     public static String REJECT_ACCEPTED_JOB= BASE_URL+"reject_accepted_job";
 }
