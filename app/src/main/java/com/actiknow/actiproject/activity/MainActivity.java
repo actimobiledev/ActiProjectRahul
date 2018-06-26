@@ -107,11 +107,13 @@ public class MainActivity extends AppCompatActivity {
     private Paint p = new Paint();
     private View view;
     DatabaseHandler db;
-    int position=0;
+    int position = 0;
     TextView tvTotalItem;
     TextView tvTotalJobs;
     int count = 0;
     final Handler handler = new Handler();
+    ArrayList<Integer> job_ids = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,31 +124,32 @@ public class MainActivity extends AppCompatActivity {
         initListener();
         isLogin();
         initDrawer();
-        jobsList();
+        jobsList(0);
     }
 
 
-
     private void initListener() {
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                jobsList();
+                jobsList(0);
             }
         });
+
         jobsAdapter.SetOnItemClickListener(new JobsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Jobs jobs = jobsList.get(position);
                 android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
                 JobDetailFragment dialog = new JobDetailFragment().newInstance(jobs.getId(), jobs.getJob_id(), 0);
-               dialog.setOnDialogResultListener(new JobDetailFragment.OnDialogResultListener() {
-                   @Override
-                   public void onDismiss() {
-                       jobsList();
-                   }
-               });
-               dialog.show(ft, "jobs");
+                dialog.setOnDialogResultListener(new JobDetailFragment.OnDialogResultListener() {
+                    @Override
+                    public void onDismiss() {
+                        jobsList(0);
+                    }
+                });
+                dialog.show(ft, "jobs");
             }
         });
         ivNavigation.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void isLogin() {
         userDetailsPref = UserDetailsPref.getInstance();
         if (userDetailsPref.getStringPref(MainActivity.this, UserDetailsPref.LOGIN_KEY).length() == 0) {
@@ -165,53 +169,44 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
     private void initView() {
         clMain = (CoordinatorLayout) findViewById(R.id.clMain);
         rvJobs = (RecyclerView) findViewById(R.id.rvJobs);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         ivNavigation = (ImageView) findViewById(R.id.ivNavigation);
-        tvTotalItem=(TextView)findViewById(R.id.tvTotalItem);
-        tvTotalJobs=(TextView)findViewById(R.id.tvTotalJobs);
+        tvTotalItem = (TextView) findViewById(R.id.tvTotalItem);
+        tvTotalJobs = (TextView) findViewById(R.id.tvTotalJobs);
     }
+
     private void initData() {
+
         db = new DatabaseHandler(MainActivity.this);
         swipeRefreshLayout.setRefreshing(true);
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
-        }
-        @Override
-
-
-    protected void onResume() {
-        super.onResume();
-
-        final int delay = 20000; //milliseconds
-        handler.postDelayed(new Runnable(){
-            public void run(){
-                jobsListHandler();
-
-                //jobsAdapter.notifyDataSetChanged();
-                handler.postDelayed(this, delay);
-
-            }
-        }, delay);
-
-
-
+        Utils.initAdapter(this, jobsAdapter, rvJobs, false, swipeRefreshLayout);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final int delay = 20000; //milliseconds
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                getJobId();
+                handler.postDelayed(this, delay);
+                }
+        }, delay);
+        }
+
     protected void onPause() {
-        Log.d("onstop","onstop");
+        Log.d("onstop", "onstop");
         handler.removeCallbacksAndMessages(null);
         super.onPause();
     }
-
     private void initAdapter() {
-        //if (NetworkConnection.isNetworkAvailable(MainActivity.this)){
         jobsAdapter = new JobsAdapter(MainActivity.this, jobsList);
-        //}else {
-        //       jobsAdapter = new JobsAdapter(MainActivity.this, db.getAllJobs());
-        //}
         rvJobs.setAdapter(jobsAdapter);
         rvJobs.setHasFixedSize(true);
         rvJobs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -219,8 +214,18 @@ public class MainActivity extends AppCompatActivity {
         rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), (int) Utils.pxFromDp(MainActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rvJobs);
-
-       // int count = 0; straightener
+        jobsAdapter.setLoadMoreListener(new JobsAdapter.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                rvJobs.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int index = jobsList.size() - 1;
+                        jobsList(index + 1);
+                    }
+                });
+            }
+        });
 
     }
 
@@ -230,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             return false;
         }
-
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
@@ -240,31 +244,11 @@ public class MainActivity extends AppCompatActivity {
                 final Jobs deletedItem = jobsList.get(viewHolder.getAdapterPosition());
                 final int deletedIndex = viewHolder.getAdapterPosition();
                 jobsAdapter.removeItem(position);
-                /*Snackbar snackbar = Snackbar.make(clMain, "Right position-" + position + " removed from cart!", Snackbar.LENGTH_LONG);
-                snackbar.setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // undo is selected, restore the deleted item
-                        jobsAdapter.restoreItem(deletedItem, deletedIndex);
-                    }
-                });
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();*/
             } else {
                 acceptJob(String.valueOf(jobsList.get(position).getId()), jobsList.get(position).getJob_id());
                 final Jobs deletedItem = jobsList.get(viewHolder.getAdapterPosition());
                 final int deletedIndex = viewHolder.getAdapterPosition();
                 jobsAdapter.removeItem(position);
-                /*Snackbar snackbar = Snackbar.make(clMain, "Left position-" + position + " removed from cart!", Snackbar.LENGTH_LONG);
-                snackbar.setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // undo is selected, restore the deleted item
-                        jobsAdapter.restoreItem(deletedItem, deletedIndex);
-                    }
-                });
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();*/
             }
         }
 
@@ -505,14 +489,16 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void jobsList() {
-        swipeRefreshLayout.setRefreshing(true);
-        if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
+    public void jobsList(final int offset) {
 
-            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS, true);
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
-            StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS,
+        // swipeRefreshLayout.setRefreshing(true);
+        if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
+            if (offset > 0) {
+                jobsList.add(new Jobs());
+                jobsAdapter.notifyItemInserted(jobsList.size() - 1);
+            }
+            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS2 + "/" + offset, true);
+            StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS2 + "/" + offset,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -520,12 +506,21 @@ public class MainActivity extends AppCompatActivity {
                             Utils.showLog(Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
                             if (response != null) {
                                 db.deleteAllJobs();
-                                jobsList.clear();
+                                //jobsList.clear();
                                 try {
                                     JSONObject jsonObj = new JSONObject(response);
                                     boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!is_error) {
+                                        Log.e("JobList", "" + jobsList.size());
+                                        if (offset > 0) {
+                                            jobsList.remove(jobsList.size() - 1);
+                                        } else {
+                                            jobsAdapter.setMoreDataAvailable(true);
+                                            jobsList.clear();
+                                        }
+
+
                                         swipeRefreshLayout.setRefreshing(false);
                                         JSONArray jsonArrayJobs = jsonObj.getJSONArray(AppConfigTags.JOBS);
                                         for (int i = 0; i < jsonArrayJobs.length(); i++) {
@@ -550,24 +545,68 @@ public class MainActivity extends AppCompatActivity {
 
                                             ));
                                         }
-                                        tvTotalJobs.setText("Total no. of jobs : "+jobsList.size());
+                                        tvTotalJobs.setText("Total no. of jobs : " + jobsList.size());
 
                                         db.insertAllJobs(jobsList);
-                                        jobsAdapter.notifyDataSetChanged();
-                                        if (rvJobs.getAdapter() != null) {
-                                            count = rvJobs.getAdapter().getItemCount();
 
-                                            tvTotalItem.setText(""+count);
+
+                                        if (jsonArrayJobs.length() == 0) {
+                                            jobsAdapter.setMoreDataAvailable(false);
+                                            Utils.showSnackBar(
+                                                    MainActivity.this,
+                                                    clMain, "No More Job available",
+                                                    Snackbar.LENGTH_LONG, "DISMISS",
+                                                    null);
                                         }
-                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                        //progressDialog.dismiss();
+                                        //  jobsAdapter.notifyDataSetChanged();
+                                        jobsAdapter.notifyDataChanged();
+
+                                    } else {
+                                        jobsAdapter.setMoreDataAvailable(true);
+                                        Utils.showSnackBar(
+                                                MainActivity.this,
+                                                clMain,
+                                                "Error occurred",
+                                                Snackbar.LENGTH_INDEFINITE, "RETRY",
+                                                new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        jobsList(offset);
+                                                    }
+                                                });
                                     }
+
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                    if (offset > 0) {
+                                        jobsAdapter.setMoreDataAvailable(true);
+                                        Utils.showSnackBar(
+                                                MainActivity.this,
+                                                clMain, "Unable to fetch more_jobs",
+                                                Snackbar.LENGTH_INDEFINITE, "Retry",
+                                                new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        jobsList(offset);
+                                                    }
+                                                });
+                                    }
                                 }
                             } else {
-                                Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                if (offset > 0) {
+                                    jobsAdapter.setMoreDataAvailable(true);
+                                    Utils.showSnackBar(
+                                            MainActivity.this,
+                                            clMain, "Unable to fetch more_jobs",
+                                            Snackbar.LENGTH_INDEFINITE, "Retry",
+                                            new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    jobsList(offset);
+                                                }
+                                            });
+                                }
                                 Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
                         }
@@ -579,6 +618,19 @@ public class MainActivity extends AppCompatActivity {
                             NetworkResponse response = error.networkResponse;
                             if (response != null && response.data != null) {
                                 Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
+                            }
+
+                            if (offset > 0) {
+                                jobsAdapter.setMoreDataAvailable(true);
+                                Utils.showSnackBar(MainActivity.this, clMain, "Unable to fetch more_jobs", Snackbar.LENGTH_INDEFINITE, "Retry",
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                jobsList(offset);
+                                            }
+                                        });
+                            } else {
+                                swipeRefreshLayout.setRefreshing(false);
                             }
                             Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
                         }
@@ -602,107 +654,32 @@ public class MainActivity extends AppCompatActivity {
             };
             Utils.sendRequest(strRequest, 30);
         } else {
-            Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
-                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(dialogIntent);
-                }
-            });
+            if (offset > 0) {
+                jobsAdapter.setMoreDataAvailable(true);
+                Utils.showSnackBar(
+                        MainActivity.this,
+                        clMain, "Unable to fetch more_jobs",
+                        Snackbar.LENGTH_INDEFINITE, "Retry",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                jobsList(offset);
+                            }
+                        });
+            } else {
+                Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
+                        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(dialogIntent);
+                    }
+                });
+            }
         }
+
     }
 
-    public void jobsListHandler() {
-        if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
-            //jobsList.clear();
-            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS, true);
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
-            StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            userDetailsPref.putStringPref(MainActivity.this, UserDetailsPref.RESPONSE, response);
-                            Utils.showLog(Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
-                            if (response != null) {
-                                db.deleteAllJobs();
-                                jobsList.clear();
-                                try {
-                                    JSONObject jsonObj = new JSONObject(response);
-                                    boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
-                                    String message = jsonObj.getString(AppConfigTags.MESSAGE);
-                                    if (!is_error) {
-                                        swipeRefreshLayout.setRefreshing(false);
-                                        JSONArray jsonArrayJobs = jsonObj.getJSONArray(AppConfigTags.JOBS);
-                                        for (int i = 0; i < jsonArrayJobs.length(); i++) {
-                                            JSONObject jsonObjectJobs = jsonArrayJobs.getJSONObject(i);
-                                            jobsList.add(new Jobs(jsonObjectJobs.getInt(AppConfigTags.ID),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_ID),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_TITLE),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_BUDGET),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_SNIPPET),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_COUNTRY),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_SKILL),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
-                                                    jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
-                                                    jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
-                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL),
-                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED),
-                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT),
-                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED),
-                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE),
-                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS),
-                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT)
-
-                                            ));
-                                        }
-
-                                        db.insertAllJobs(jobsList);
-                                        jobsAdapter.notifyDataSetChanged();
-                                        if (rvJobs.getAdapter() != null) {
-                                            count = rvJobs.getAdapter().getItemCount();
-                                            tvTotalItem.setText(""+count);
-                                        }
-                                        }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Utils.showLog(Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString(), true);
-                            NetworkResponse response = error.networkResponse;
-                            if (response != null && response.data != null) {
-                                Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
-                            }
-                        }
-                    }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new Hashtable<String, String>();
-                    Utils.showLog(Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
-                    return params;
-                }
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    UserDetailsPref userDetailsPref = UserDetailsPref.getInstance();
-                    params.put(AppConfigTags.HEADER_API_KEY, Constants.api_key);
-                    params.put(AppConfigTags.HEADER_USER_LOGIN_KEY, userDetailsPref.getStringPref(MainActivity.this, UserDetailsPref.LOGIN_KEY));
-                    Utils.showLog(Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
-                    return params;
-                }
-            };
-            Utils.sendRequest(strRequest, 30);
-        }
-    }
 
     private void rejectJob(final String id, final String job_id) {
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
@@ -722,7 +699,7 @@ public class MainActivity extends AppCompatActivity {
                                         Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                         //finish();
                                         //startActivity(getIntent());
-                                        jobsList();
+                                        jobsList(0);
                                         /*userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.ID, jsonObj.getString (AppConfigTags.USER_ID));
                                         userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.NAME, jsonObj.getString (AppConfigTags.USER_NAME));
                                         userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.EMAIL, jsonObj.getString (AppConfigTags.USER_EMAIL));
@@ -810,7 +787,7 @@ public class MainActivity extends AppCompatActivity {
                                         Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                         // finish();
                                         // startActivity(getIntent());
-                                        jobsList();
+                                        jobsList(0);
                                         /*userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.ID, jsonObj.getString (AppConfigTags.USER_ID));
                                         userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.NAME, jsonObj.getString (AppConfigTags.USER_NAME));
                                         userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.EMAIL, jsonObj.getString (AppConfigTags.USER_EMAIL));
@@ -880,9 +857,75 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void getJobId() {
+        if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
+            //  Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            Utils.showLog(Log.INFO, "" + AppConfigTags.URL, AppConfigURL.JOBS_IDS, true);
+            StringRequest strRequest1 = new StringRequest(Request.Method.GET, AppConfigURL.JOBS_IDS,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Utils.showLog(Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject(response);
+                                    boolean error = jsonObj.getBoolean(AppConfigTags.ERROR);
+                                    String message = jsonObj.getString(AppConfigTags.MESSAGE);
+                                    if (!error) {
+                                        JSONArray jsonArrayJobIds = jsonObj.getJSONArray(AppConfigTags.JOB_IDS);
+                                        for (int i = 0; i < jsonArrayJobIds.length(); i++) {
+                                            JSONObject jsonObjectJobIds = jsonArrayJobIds.getJSONObject(i);
+                                            job_ids.add(jsonObjectJobIds.getInt(AppConfigTags.ID));
+                                            int k = 0;
+                                            for (Jobs jobs : jobsList) {
+                                                if (jsonObjectJobIds.getInt(AppConfigTags.ID) == jobs.getId()) {
+                                                    jobsAdapter.removeItem(k);
+                                                }
+                                                k++;
+                                            }
+                                        }
+                                       /* for(int j = 0 ; j < job_ids.size(); j++){
+                                            int k = 0;
+                                            for (Jobs jobs : jobsList) {
+                                                if(job_ids.get(j).equals(jobs.getId())){
+                                                    jobsAdapter.removeItem(k);
+                                                }
+                                                k++;
+                                            }
+                                        }*/
+                                        jobsAdapter.notifyDataSetChanged();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Utils.showLog(Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString(), true);
+                            NetworkResponse response = error.networkResponse;
+                            if (response != null && response.data != null) {
+                                Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
+                            }
+                        }
+                    }) {
 
-
-
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put(AppConfigTags.HEADER_API_KEY, Constants.api_key);
+                    params.put(AppConfigTags.USER_LOGIN_KEY, userDetailsPref.getStringPref(MainActivity.this, UserDetailsPref.LOGIN_KEY));
+                    Utils.showLog(Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
+                    return params;
+                }
+            };
+            Utils.sendRequest(strRequest1, 60);
+        }
+    }
 
 
 }

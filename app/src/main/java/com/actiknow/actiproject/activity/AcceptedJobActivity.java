@@ -134,54 +134,9 @@ public class AcceptedJobActivity extends AppCompatActivity {
         //swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
     }
     private void initData() {
-       // swipeRefreshLayout.setRefreshing(true);
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
-      /*  String response = userDetailsPref.getStringPref(this, UserDetailsPref.RESPONSE);
-        if (response != null) {
-          //  swipeRefreshLayout.setRefreshing(false);
-            try {
-                arrayResponse = response;
-                JSONObject jsonObj = new JSONObject(response);
-                boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
-                String message = jsonObj.getString(AppConfigTags.MESSAGE);
-                JSONArray jsonArrayAcceptedJobsOld = jsonObj.getJSONArray("accepted_job");
-                Log.e("AcceptedJobs",""+ jsonArrayAcceptedJobsOld.length());
-                if (!is_error) {
-                    JSONArray jsonArrayAcceptedJobs = jsonObj.getJSONArray("accepted_job");
-                    Log.e("AcceptedJobs",""+ jsonArrayAcceptedJobs.length());
-                    for (int i = 0; i < jsonArrayAcceptedJobs.length(); i++) {
-                        JSONObject jsonObjectAcceptedJobs = jsonArrayAcceptedJobs.getJSONObject(i);
-                        acceptedjobsList.add(new AcceptedJobs(jsonObjectAcceptedJobs.getInt(AppConfigTags.ID),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_ID),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_TITLE),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_BUDGET),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_SNIPPET),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_COUNTRY),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_SKILL),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
-                                jsonObjectAcceptedJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
-                                jsonObjectAcceptedJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
-                                jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_URL)));
 
-                    }//acceptedJobsAdapter.notifyDataSetChanged();
-                    acceptedJobsAdapter = new AcceptedJobsAdapter(AcceptedJobActivity.this, acceptedjobsList);
-                    rvJobs.setAdapter(acceptedJobsAdapter);
-                    rvJobs.setHasFixedSize(true);
-                    rvJobs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-                    rvJobs.setItemAnimator(new DefaultItemAnimator());
-                    rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(AcceptedJobActivity.this, 16), (int) Utils.pxFromDp(AcceptedJobActivity.this, 16), (int) Utils.pxFromDp(AcceptedJobActivity.this, 16), (int) Utils.pxFromDp(AcceptedJobActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
-                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-                    itemTouchHelper.attachToRecyclerView(rvJobs);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Utils.showSnackBar(AcceptedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
-            }
-        } else {
-            Utils.showSnackBar(AcceptedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
-            Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
-        }*/
     }
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
         @Override

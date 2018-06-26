@@ -66,9 +66,9 @@ import static android.content.Context.ACTIVITY_SERVICE;
  * Created by Admin on 23-12-2015.
  */
 public class Utils {
-    public static int isValidEmail (String email) {
-        if (email.length () != 0) {
-            boolean validMail = isValidEmail2 (email);
+    public static int isValidEmail(String email) {
+        if (email.length() != 0) {
+            boolean validMail = isValidEmail2(email);
             if (validMail)
                 return 1;
             else
@@ -77,46 +77,46 @@ public class Utils {
             return 0;
     }
 
-    public static boolean isValidEmail2 (CharSequence target) {
-        return ! TextUtils.isEmpty (target) && android.util.Patterns.EMAIL_ADDRESS.matcher (target).matches ();
+    public static boolean isValidEmail2(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    public static int isValidPassword (String password) {
-        if (password.length () > 0) {
+    public static int isValidPassword(String password) {
+        if (password.length() > 0) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    public static Bitmap base64ToBitmap (String b64) {
-        byte[] imageAsBytes = Base64.decode (b64.getBytes (), Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray (imageAsBytes, 0, imageAsBytes.length);
+    public static Bitmap base64ToBitmap(String b64) {
+        byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
     }
 
-    public static String bitmapToBase64 (Bitmap bmp) {
+    public static String bitmapToBase64(Bitmap bmp) {
         if (bmp != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress (Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] imageBytes = baos.toByteArray ();
-            String encodedImage = Base64.encodeToString (imageBytes, Base64.DEFAULT);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+            String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
             return encodedImage;
         } else {
             return "";
         }
     }
 
-    public static String convertTimeFormat (String dateInOriginalFormat, String originalFormat, String requiredFormat) {
+    public static String convertTimeFormat(String dateInOriginalFormat, String originalFormat, String requiredFormat) {
         if (dateInOriginalFormat != "null") {
             SimpleDateFormat sdf = new SimpleDateFormat(originalFormat);//yyyy-MM-dd");
             Date testDate = null;
             try {
-                testDate = sdf.parse (dateInOriginalFormat);
+                testDate = sdf.parse(dateInOriginalFormat);
             } catch (Exception ex) {
-                ex.printStackTrace ();
+                ex.printStackTrace();
             }
             SimpleDateFormat formatter = new SimpleDateFormat(requiredFormat);
-            String newFormat = formatter.format (testDate);
+            String newFormat = formatter.format(testDate);
             return newFormat;
         } else {
             return "Unavailable";
@@ -145,200 +145,200 @@ public class Utils {
         */
 
 
-    public static void showSnackBar (Activity activity, CoordinatorLayout coordinatorLayout, String message, int duration, String button_text, View.OnClickListener onClickListener) {
-        final Snackbar snackbar = Snackbar.make (coordinatorLayout, message, duration);
-        snackbar.setAction (button_text, onClickListener);
+    public static void showSnackBar(Activity activity, CoordinatorLayout coordinatorLayout, String message, int duration, String button_text, View.OnClickListener onClickListener) {
+        final Snackbar snackbar = Snackbar.make(coordinatorLayout, message, duration);
+        snackbar.setAction(button_text, onClickListener);
 
-        View sbView = snackbar.getView ();
-        sbView.setBackgroundColor (activity.getResources ().getColor (R.color.primary));
-        TextView textView = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_text);
-        TextView textView2 = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_action);
-        textView.setTextColor (activity.getResources ().getColor (R.color.tertiary_text));
-        textView2.setTextColor (activity.getResources ().getColor (R.color.tertiary_text));
-        textView.setTypeface (SetTypeFace.getTypeface (activity));
-        textView2.setTypeface (SetTypeFace.getTypeface (activity));
-        snackbar.show ();
+        View sbView = snackbar.getView();
+        sbView.setBackgroundColor(activity.getResources().getColor(R.color.primary));
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView2 = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_action);
+        textView.setTextColor(activity.getResources().getColor(R.color.tertiary_text));
+        textView2.setTextColor(activity.getResources().getColor(R.color.tertiary_text));
+        textView.setTypeface(SetTypeFace.getTypeface(activity));
+        textView2.setTypeface(SetTypeFace.getTypeface(activity));
+        snackbar.show();
     }
 
 
-    public static void showSnackBar2 (Activity activity, CoordinatorLayout coordinatorLayout, String message, int duration, String button_text, View.OnClickListener onClickListener) {
-        final Snackbar snackbar = Snackbar.make (coordinatorLayout, message, duration);
-        snackbar.setAction (button_text, onClickListener);
+    public static void showSnackBar2(Activity activity, CoordinatorLayout coordinatorLayout, String message, int duration, String button_text, View.OnClickListener onClickListener) {
+        final Snackbar snackbar = Snackbar.make(coordinatorLayout, message, duration);
+        snackbar.setAction(button_text, onClickListener);
 
-        View sbView = snackbar.getView ();
-        sbView.setBackgroundColor (activity.getResources ().getColor (R.color.green));
-        TextView textView = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_text);
-        TextView textView2 = (TextView) sbView.findViewById (android.support.design.R.id.snackbar_action);
-        textView.setTextColor (activity.getResources ().getColor (R.color.tertiary_text));
-        textView2.setTextColor (activity.getResources ().getColor (R.color.tertiary_text));
-        textView.setTypeface (SetTypeFace.getTypeface (activity));
-        textView2.setTypeface (SetTypeFace.getTypeface (activity));
-        snackbar.show ();
+        View sbView = snackbar.getView();
+        sbView.setBackgroundColor(activity.getResources().getColor(R.color.green));
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView2 = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_action);
+        textView.setTextColor(activity.getResources().getColor(R.color.tertiary_text));
+        textView2.setTextColor(activity.getResources().getColor(R.color.tertiary_text));
+        textView.setTypeface(SetTypeFace.getTypeface(activity));
+        textView2.setTypeface(SetTypeFace.getTypeface(activity));
+        snackbar.show();
     }
 
-    public static void showToast (Activity activity, String message, boolean duration_long) {
+    public static void showToast(Activity activity, String message, boolean duration_long) {
         if (duration_long) {
-            Toast.makeText (activity, message, Toast.LENGTH_LONG).show ();
+            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText (activity, message, Toast.LENGTH_SHORT).show ();
+            Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void setTypefaceToAllViews (Activity activity, View view) {
-        Typeface tf = SetTypeFace.getTypeface (activity);
-        SetTypeFace.applyTypeface (activity, SetTypeFace.getParentView (view), tf);
+    public static void setTypefaceToAllViews(Activity activity, View view) {
+        Typeface tf = SetTypeFace.getTypeface(activity);
+        SetTypeFace.applyTypeface(activity, SetTypeFace.getParentView(view), tf);
     }
 
-    public static void showProgressDialog (ProgressDialog progressDialog, String message, boolean cancelable) {
+    public static void showProgressDialog(ProgressDialog progressDialog, String message, boolean cancelable) {
         // Initialize the progressDialog before calling this function
         TextView tvMessage;
-        progressDialog.show ();
-        progressDialog.getWindow ().setBackgroundDrawable (new ColorDrawable(Color.TRANSPARENT));
-        progressDialog.setContentView (R.layout.progress_dialog);
-        tvMessage = (TextView) progressDialog.findViewById (R.id.tvProgressDialogMessage);
+        progressDialog.show();
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        progressDialog.setContentView(R.layout.progress_dialog);
+        tvMessage = (TextView) progressDialog.findViewById(R.id.tvProgressDialogMessage);
         if (message != null) {
-            tvMessage.setText (message);
-            tvMessage.setVisibility (View.VISIBLE);
-        }
-        else
-            tvMessage.setVisibility (View.GONE);
-        progressDialog.setCancelable (cancelable);
+            tvMessage.setText(message);
+            tvMessage.setVisibility(View.VISIBLE);
+        } else
+            tvMessage.setVisibility(View.GONE);
+        progressDialog.setCancelable(cancelable);
     }
 
-    public static void showLog (int log_type, String tag, String message, boolean show_flag) {
+    public static void showLog(int log_type, String tag, String message, boolean show_flag) {
         if (Constants.show_log) {
             if (show_flag) {
                 switch (log_type) {
                     case Log.DEBUG:
-                        Log.d (tag, message);
+                        Log.d(tag, message);
                         break;
                     case Log.ERROR:
-                        Log.e (tag, message);
+                        Log.e(tag, message);
                         break;
                     case Log.INFO:
-                        Log.i (tag, message);
+                        Log.i(tag, message);
                         break;
                     case Log.VERBOSE:
-                        Log.v (tag, message);
+                        Log.v(tag, message);
                         break;
                     case Log.WARN:
-                        Log.w (tag, message);
+                        Log.w(tag, message);
                         break;
                     case Log.ASSERT:
-                        Log.wtf (tag, message);
+                        Log.wtf(tag, message);
                         break;
                 }
             }
         }
     }
 
-    public static void showErrorInEditText (EditText editText, String message) {
-        editText.setError (message);
+    public static void showErrorInEditText(EditText editText, String message) {
+        editText.setError(message);
     }
 
-    public static void hideSoftKeyboard (Activity activity) {
-        View view = activity.getCurrentFocus ();
+    public static void hideSoftKeyboard(Activity activity) {
+        View view = activity.getCurrentFocus();
 //        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService (Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow (view.getWindowToken (), 0);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //        }
     }
 
-    public static boolean isPackageExists (Activity activity, String targetPackage) {
+    public static boolean isPackageExists(Activity activity, String targetPackage) {
         List<ApplicationInfo> packages;
         PackageManager pm;
-        pm = activity.getPackageManager ();
-        packages = pm.getInstalledApplications (0);
+        pm = activity.getPackageManager();
+        packages = pm.getInstalledApplications(0);
         for (ApplicationInfo packageInfo : packages) {
-            if (packageInfo.packageName.equals (targetPackage))
+            if (packageInfo.packageName.equals(targetPackage))
                 return true;
         }
         return false;
     }
 
-    public static void sendRequest (StringRequest strRequest, int timeout_seconds) {
-        strRequest.setShouldCache (false);
+    public static void sendRequest(StringRequest strRequest, int timeout_seconds) {
+        strRequest.setShouldCache(false);
         int timeout = timeout_seconds * 1000;
-        AppController.getInstance ().addToRequestQueue (strRequest);
-        strRequest.setRetryPolicy (new DefaultRetryPolicy (timeout,
+        AppController.getInstance().addToRequestQueue(strRequest);
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(timeout,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    public static Bitmap compressBitmap (Bitmap bitmap, Activity activity) {
+    public static Bitmap compressBitmap(Bitmap bitmap, Activity activity) {
         int image_quality = 10; // 10
         int max_image_size = 320; // 320
 
         Bitmap decoded = null;
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            if (NetworkConnection.isNetworkAvailable (activity)) {
-                bitmap.compress (Bitmap.CompressFormat.JPEG, image_quality, out);
+            if (NetworkConnection.isNetworkAvailable(activity)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, image_quality, out);
             } else {
-                bitmap.compress (Bitmap.CompressFormat.JPEG, image_quality, out);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, image_quality, out);
             }
-            decoded = Utils.scaleDown (BitmapFactory.decodeStream (new ByteArrayInputStream(out.toByteArray ())), max_image_size, true);
+            decoded = Utils.scaleDown(BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray())), max_image_size, true);
         } catch (Exception e) {
-            e.printStackTrace ();
-            Utils.showLog (Log.ERROR, "EXCEPTION", e.getMessage (), true);
+            e.printStackTrace();
+            Utils.showLog(Log.ERROR, "EXCEPTION", e.getMessage(), true);
         }
         return decoded;
     }
 
-    public static Bitmap scaleDown (Bitmap realImage, float maxImageSize, boolean filter) {
-        float ratio = Math.min ((float) maxImageSize / realImage.getWidth (), (float) maxImageSize / realImage.getHeight ());
-        int width = Math.round ((float) ratio * realImage.getWidth ());
-        int height = Math.round ((float) ratio * realImage.getHeight ());
-        Bitmap newBitmap = Bitmap.createScaledBitmap (realImage, width, height, filter);
+
+    public static Bitmap scaleDown(Bitmap realImage, float maxImageSize, boolean filter) {
+        float ratio = Math.min((float) maxImageSize / realImage.getWidth(), (float) maxImageSize / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width, height, filter);
         return newBitmap;
     }
 
-    public static String getJSONFromAsset (Activity activity, String file_name) {
+    public static String getJSONFromAsset(Activity activity, String file_name) {
         String json = null;
         try {
-            InputStream is = activity.getAssets ().open (file_name);
-            int size = is.available ();
+            InputStream is = activity.getAssets().open(file_name);
+            int size = is.available();
             byte[] buffer = new byte[size];
-            is.read (buffer);
-            is.close ();
+            is.read(buffer);
+            is.close();
             json = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            ex.printStackTrace ();
+            ex.printStackTrace();
             return null;
         }
         return json;
     }
 
-    public static int getHourFromServerTime () {
+    public static int getHourFromServerTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar calendar = Calendar.getInstance ();
+        Calendar calendar = Calendar.getInstance();
         try {
-            calendar.setTime (simpleDateFormat.parse (Constants.server_time));
+            calendar.setTime(simpleDateFormat.parse(Constants.server_time));
 //            Log.e ("date", "" + calendar.get (Calendar.DAY_OF_MONTH));
 //            Log.e ("month", "" + calendar.get (Calendar.MONTH));
 //            Log.e ("year", "" + calendar.get (Calendar.YEAR));
 //            Log.e ("hour", "" + calendar.get (Calendar.HOUR));
 //            Log.e ("minutes", "" + calendar.get (Calendar.MINUTE));
 //            Log.e ("seconds", "" + calendar.get (Calendar.SECOND));
-            return calendar.get (calendar.HOUR_OF_DAY);
+            return calendar.get(calendar.HOUR_OF_DAY);
         } catch (ParseException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
         return 0;
     }
 
-    public static float convertPixelsToDp (float px, Context context) {
-        Resources resources = context.getResources ();
-        DisplayMetrics metrics = resources.getDisplayMetrics ();
+    public static float convertPixelsToDp(float px, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
     }
 
-    public static boolean isEnoughMemory (Activity activity) {
+    public static boolean isEnoughMemory(Activity activity) {
         // Before doing something that requires a lot of memory,
         // check to see whether the device is in a low memory state.
-        ActivityManager.MemoryInfo memoryInfo = getAvailableMemory (activity);
-        if (! memoryInfo.lowMemory) {
+        ActivityManager.MemoryInfo memoryInfo = getAvailableMemory(activity);
+        if (!memoryInfo.lowMemory) {
             return true;
             // Do memory intensive work ...
         } else {
@@ -346,43 +346,43 @@ public class Utils {
         }
     }
 
-    private static ActivityManager.MemoryInfo getAvailableMemory (Activity activity) {
-        ActivityManager activityManager = (ActivityManager) activity.getSystemService (ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo ();
-        activityManager.getMemoryInfo (memoryInfo);
+    private static ActivityManager.MemoryInfo getAvailableMemory(Activity activity) {
+        ActivityManager activityManager = (ActivityManager) activity.getSystemService(ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(memoryInfo);
         return memoryInfo;
     }
 
-    public static String generateMD5 (String s) {
+    public static String generateMD5(String s) {
         try {
             // Create MD5 Hash
-            MessageDigest digest = MessageDigest.getInstance ("MD5");
-            digest.update (s.getBytes ());
-            byte messageDigest[] = digest.digest ();
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
 
             // Create Hex String
             StringBuffer hexString = new StringBuffer();
             for (int i = 0; i < messageDigest.length; i++)
-                hexString.append (Integer.toHexString (0xFF & messageDigest[i]));
-            return hexString.toString ();
+                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
         return "";
     }
 
-    public static float dpFromPx (Context context, float px) {
-        return px / context.getResources ().getDisplayMetrics ().density;
+    public static float dpFromPx(Context context, float px) {
+        return px / context.getResources().getDisplayMetrics().density;
     }
 
-    public static float pxFromDp (Context context, float dp) {
-        return dp * context.getResources ().getDisplayMetrics ().density;
+    public static float pxFromDp(Context context, float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 
-    public static boolean dial (Context c) {
+    public static boolean dial(Context c) {
         final Intent i = new Intent(Intent.ACTION_DIAL);
-        i.setData (Uri.parse ("tel:" + "9873684678"));//+ c.getString (R.string.intent_number)));
+        i.setData(Uri.parse("tel:" + "9873684678"));//+ c.getString (R.string.intent_number)));
 //        final Intent icc = Intent.createChooser (i, c.getString (R.string.intent_call));
         try {
 //            c.startActivity (icc);
@@ -392,9 +392,9 @@ public class Utils {
         }
     }
 
-    public static boolean sendMail (Context c) {
+    public static boolean sendMail(Context c) {
         final String mail = "karman.singhh@gmail.com";//c.getString (R.string.intent_mail);
-        final Uri u = Uri.fromParts ("mailto", mail, null);
+        final Uri u = Uri.fromParts("mailto", mail, null);
         final Intent i = new Intent(Intent.ACTION_SENDTO, u);
 //        final Intent icc = Intent.createChooser (i, c.getString (R.string.intent_mail_tit));
         try {
@@ -405,7 +405,7 @@ public class Utils {
         }
     }
 
-    public static String getAutoCompleteUrl (String place) {
+    public static String getAutoCompleteUrl(String place) {
         // Obtain browser key from https://code.google.com/apis/console
         String key = "key=AIzaSyAxfILlKxFzEN-K5y2hwm4NdvGjKleUa60";
         String inputc = "components=country:in";
@@ -424,7 +424,7 @@ public class Utils {
         return url;
     }
 
-    public static String getPlaceDetailsUrl (String ref) {
+    public static String getPlaceDetailsUrl(String ref) {
         // Obtain browser key from https://code.google.com/apis/console
         String key = "key=AIzaSyAxfILlKxFzEN-K5y2hwm4NdvGjKleUa60";
         // reference of place
@@ -437,145 +437,147 @@ public class Utils {
         String output = "json";
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/place/details/" + output + "?" + parameters;
-        Log.d ("URL", "" + url);
+        Log.d("URL", "" + url);
         return url;
     }
 
-    public static String downloadUrl (String strUrl) throws IOException {
+    public static String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(strUrl);
             // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection ();
+            urlConnection = (HttpURLConnection) url.openConnection();
             // Connecting to url
-            urlConnection.connect ();
+            urlConnection.connect();
             // Reading data from url
-            iStream = urlConnection.getInputStream ();
+            iStream = urlConnection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
             StringBuffer sb = new StringBuffer();
             String line = "";
-            while ((line = br.readLine ()) != null) {
-                sb.append (line);
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
             }
-            data = sb.toString ();
-            br.close ();
+            data = sb.toString();
+            br.close();
         } catch (Exception e) {
-            Log.d ("Exception", e.toString ());
+            Log.d("Exception", e.toString());
         } finally {
-            iStream.close ();
-            urlConnection.disconnect ();
+            iStream.close();
+            urlConnection.disconnect();
         }
         return data;
     }
 
-    public static void initAdapter (Activity activity, RecyclerView.Adapter<RecyclerView.ViewHolder> adapter, RecyclerView recyclerView, boolean divider, @Nullable SwipeRefreshLayout swipeRefreshLayout) {
-        recyclerView.setAdapter (adapter);
-        recyclerView.setHasFixedSize (true);
-        recyclerView.setLayoutManager (new LinearLayoutManager(activity));
+    public static void initAdapter(Activity activity, RecyclerView.Adapter<RecyclerView.ViewHolder> adapter, RecyclerView recyclerView, boolean divider, @Nullable SwipeRefreshLayout swipeRefreshLayout) {
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
         if (divider) {
 
         } else {
-            recyclerView.setItemAnimator (new DefaultItemAnimator());
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
         }
         if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setColorSchemeResources (R.color.colorPrimary);
+            swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         }
     }
 
-    public static void turnGPSOn (Activity activity) {
-        String provider = Settings.Secure.getString (activity.getContentResolver (), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+    public static void turnGPSOn(Activity activity) {
+        String provider = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-        if (! provider.contains ("gps")) { //if gps is disabled
+        if (!provider.contains("gps")) { //if gps is disabled
             final Intent poke = new Intent();
-            poke.setClassName ("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory (Intent.CATEGORY_ALTERNATIVE);
-            poke.setData (Uri.parse ("3"));
-            activity.sendBroadcast (poke);
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            activity.sendBroadcast(poke);
         }
     }
 
-    public static void turnGPSOff (Activity activity) {
-        String provider = Settings.Secure.getString (activity.getContentResolver (), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+    public static void turnGPSOff(Activity activity) {
+        String provider = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-        if (provider.contains ("gps")) { //if gps is enabled
+        if (provider.contains("gps")) { //if gps is enabled
             final Intent poke = new Intent();
-            poke.setClassName ("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory (Intent.CATEGORY_ALTERNATIVE);
-            poke.setData (Uri.parse ("3"));
-            activity.sendBroadcast (poke);
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            activity.sendBroadcast(poke);
         }
     }
-    
-    
-    public static int isValidMobile (String mobile) {
+
+
+    public static int isValidMobile(String mobile) {
         int number_status = 0;
-        String first_char = mobile.substring (0, 1);
-        if (mobile.length () == 10 && Integer.parseInt (first_char) > 6) {
+        String first_char = mobile.substring(0, 1);
+        if (mobile.length() == 10 && Integer.parseInt(first_char) > 6) {
             number_status = 1;
-        } else if (mobile.length () < 10 && Integer.parseInt (first_char) > 6) {
+        } else if (mobile.length() < 10 && Integer.parseInt(first_char) > 6) {
             number_status = 2;
-        } else if (Integer.parseInt (first_char) <= 6 && Integer.parseInt (first_char) > 0 && mobile.length () <= 10 && mobile.length () > 1) {
+        } else if (Integer.parseInt(first_char) <= 6 && Integer.parseInt(first_char) > 0 && mobile.length() <= 10 && mobile.length() > 1) {
             number_status = 3;
-        } else if (mobile.length () == 0) {
+        } else if (mobile.length() == 0) {
             number_status = 4;
         }
         return number_status;
     }
 
 
-    public static boolean isValidEmail1 (String emailInput) {
+    public static boolean isValidEmail1(String emailInput) {
         String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-        Pattern pattern = Pattern.compile (EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher (emailInput);
-        return matcher.matches ();
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(emailInput);
+        return matcher.matches();
     }
 
 
-    public static void getHashKey (Activity activity) {
+    public static void getHashKey(Activity activity) {
         try {
-            PackageInfo info = activity.getPackageManager ().getPackageInfo (
+            PackageInfo info = activity.getPackageManager().getPackageInfo(
                     "com.actiknow.famdent",
                     PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance ("SHA");
-                md.update (signature.toByteArray ());
-                Log.d ("KeyHash:", Base64.encodeToString (md.digest (), Base64.DEFAULT));
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
         } catch (PackageManager.NameNotFoundException e) {
-            
+
         } catch (NoSuchAlgorithmException e) {
-            
+
         }
     }
-    
 
-    
 
-    public static void shareToGmail (Activity activity, String[] email, String subject, String content) {
+    public static void shareToGmail(Activity activity, String[] email, String subject, String content) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.putExtra (Intent.EXTRA_EMAIL, email);
-        emailIntent.putExtra (Intent.EXTRA_SUBJECT, subject);
-        emailIntent.setType ("message/rfc822");
-        emailIntent.putExtra (Intent.EXTRA_TEXT, content);
-        final PackageManager pm = activity.getPackageManager ();
-        final List<ResolveInfo> matches = pm.queryIntentActivities (emailIntent, 0);
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, email);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, content);
+        final PackageManager pm = activity.getPackageManager();
+        final List<ResolveInfo> matches = pm.queryIntentActivities(emailIntent, 0);
         ResolveInfo best = null;
         for (final ResolveInfo info : matches)
-            if (info.activityInfo.packageName.endsWith (".gm") || info.activityInfo.name.toLowerCase ().contains ("gmail"))
+            if (info.activityInfo.packageName.endsWith(".gm") || info.activityInfo.name.toLowerCase().contains("gmail"))
                 best = info;
         if (best != null)
-            emailIntent.setClassName (best.activityInfo.packageName, best.activityInfo.name);
-        activity.startActivity (emailIntent);
+            emailIntent.setClassName(best.activityInfo.packageName, best.activityInfo.name);
+        activity.startActivity(emailIntent);
     }
-    
-    public static void callPhone (Activity activity, String number) {
-        Intent sIntent = new Intent(Intent.ACTION_DIAL, Uri.parse ("tel:" + number));
-        sIntent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity (sIntent);
+
+    public static void callPhone(Activity activity, String number) {
+        Intent sIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
+        sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(sIntent);
     }
 }
+
+
+
+

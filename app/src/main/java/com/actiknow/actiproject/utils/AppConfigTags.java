@@ -57,7 +57,7 @@ public class AppConfigTags {
     public static final String CLIENT_JOB_PERCENT = "client_job_percent";
 
 
-
+    public static final String JOB_IDS = "job_ids";
 
 
     public static final String ATTRIBUTE_ID = "attribute_id";

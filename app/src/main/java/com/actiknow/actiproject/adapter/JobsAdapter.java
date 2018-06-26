@@ -33,12 +33,17 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
+public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     OnItemClickListener mItemClickListener;
-
     private Activity activity;
     private List<Jobs> jobsList = new ArrayList<Jobs>();
     ProgressBar progressDialog;
+    OnItemClickListener onItemClickListener;
+    OnLoadMoreListener loadMoreListener;
+    boolean isLoading = false, isMoreDataAvailable = true;
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
+
 
     public JobsAdapter(Activity activity, List<Jobs> jobsList) {
         this.activity = activity;
@@ -46,33 +51,65 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final LayoutInflater mInflater = LayoutInflater.from(parent.getContext());
+    public int getItemViewType (int position) {
+        if (jobsList.get (position).getId () != 0) {
+            return VIEW_TYPE_ITEM;
+        } else {
+            return VIEW_TYPE_LOADING;
+        }
+//        if (isPositionFooter (position)) {
+//            return VIEW_TYPE_LOADING;
+//        }
+//        return VIEW_TYPE_ITEM;
+    }
+    private boolean isPositionFooter (int position) {
+        return position == jobsList.size ();
+    }
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        /*final LayoutInflater mInflater = LayoutInflater.from(parent.getContext());
         final View sView = mInflater.inflate(R.layout.list_item_jobs_list, parent, false);
-        return new ViewHolder(sView);
+        return new ViewHolder(sView);*/
+
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_jobs_list, parent, false);
+            return new ViewHolder2(view, onItemClickListener);
+        } else if (viewType == VIEW_TYPE_LOADING) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_loading, parent, false);
+            return new LoadHolder(view);
+        }
+        return null;
     }
 
+
+
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {//        runEnterAnimation (holder.itemView);
-        final Jobs jobs = jobsList.get(position);
-        progressDialog = new ProgressBar(activity);
-        Utils.setTypefaceToAllViews(activity, holder.tvTitle);
-        holder.tvTitle.setText(jobs.getTitle());
-        if (jobs.getStatus().length()>0){
-            holder.tvCountryName.setText(jobs.getCountry()+", "+jobs.getStatus()+", "+jobs.getBudget());
-        }
-        else {
-            holder.tvCountryName.setText(jobs.getCountry()+", "+"NA"+", "+jobs.getBudget());
-        }
-        holder.tvStatus.setText(jobs.getSnippet());
-       // holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {//        runEnterAnimation (holder.itemView);
 
-        holder.tvJobPosted.setText("Job Posted : "+jobs.getJob_post()+"  |  ");
-        holder.tvJobFilled.setText("Job Filled : "+jobs.getTotal_job_filled()+"  |  "+jobs.getClient_job_percent());
-        holder.tvTotalHour.setText("Hours : "+jobs.getTotal_hours()+"  |  ");
-        holder.tvTotalSpent.setText("Spent : "+jobs.getTotal_spent());
-        holder.tvMemberSince.setText(jobs.getClient_member_since());
+        if (position >= getItemCount () - 1 && isMoreDataAvailable && ! isLoading && loadMoreListener != null) {
+            isLoading = true;
+            loadMoreListener.onLoadMore ();
+        }
+        if (getItemViewType (position) == VIEW_TYPE_ITEM) {
+            ViewHolder2 viewHolder2 = (ViewHolder2) holder;
+            final Jobs jobs = jobsList.get(position);
+            progressDialog = new ProgressBar(activity);
+            Utils.setTypefaceToAllViews(activity, viewHolder2.tvTitle);
+            viewHolder2.tvTitle.setText(jobs.getTitle());
+            if (jobs.getStatus().length() > 0) {
+                viewHolder2.tvCountryName.setText(jobs.getCountry() + ", " + jobs.getStatus() + ", " + jobs.getBudget());
+            } else {
+                viewHolder2.tvCountryName.setText(jobs.getCountry() + ", " + "NA" + ", " + jobs.getBudget());
+            }
+            viewHolder2.tvStatus.setText(jobs.getSnippet());
+            // holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
 
+            viewHolder2.tvJobPosted.setText("Job Posted : " + jobs.getJob_post() + "  |  ");
+            viewHolder2.tvJobFilled.setText("Job Filled : " + jobs.getTotal_job_filled() + "  |  " + jobs.getClient_job_percent());
+            viewHolder2.tvTotalHour.setText("Hours : " + jobs.getTotal_hours() + "  |  ");
+            viewHolder2.tvTotalSpent.setText("Spent : " + jobs.getTotal_spent());
+            viewHolder2.tvMemberSince.setText(jobs.getClient_member_since());
+        }
     }
 
 
@@ -94,15 +131,38 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         return jobsList.size();
     }
 
+    public void notifyDataChanged () {
+        notifyDataSetChanged ();
+        isLoading = false;
+    }
+    public void setMoreDataAvailable (boolean moreDataAvailable) {
+        isMoreDataAvailable = moreDataAvailable;
+    }
+
+    public void setLoadMoreListener (OnLoadMoreListener loadMoreListener) {
+        this.loadMoreListener = loadMoreListener;
+    }
+
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore ();
     }
 
     public interface OnItemClickListener {
         public void onItemClick(View view, int position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class LoadHolder extends RecyclerView.ViewHolder {
+
+        public LoadHolder (View itemView) {
+            super (itemView);
+        }
+    }
+
+    public class ViewHolder2 extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvTitle;
         TextView tvCountryName;
         TextView tvStatus;
@@ -116,10 +176,11 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
 
 
         public RelativeLayout rlMain;
+        OnItemClickListener onItemClickListener;
 
         ProgressBar progressBar;
 
-        public ViewHolder(View view) {
+        public ViewHolder2(View view, OnItemClickListener onItemClickListener) {
             super(view);
             tvTitle = (TextView) view.findViewById(R.id.tvTitle);
             tvCountryName = (TextView) view.findViewById(R.id.tvCountryName);
@@ -133,6 +194,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
             tvMemberSince = (TextView) view.findViewById(R.id.tvMemberSince);
             rlMain = (RelativeLayout) view.findViewById(R.id.rlMain);
             view.setOnClickListener(this);
+            this.onItemClickListener = onItemClickListener;
         }
 
         @Override
