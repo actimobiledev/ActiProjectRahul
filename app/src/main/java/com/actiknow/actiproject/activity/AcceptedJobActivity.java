@@ -118,7 +118,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
         final int delay = 20000; //milliseconds
         handler.postDelayed(new Runnable() {
             public void run() {
-             //   getAcceptedJobId();
+                getAcceptedJobId();
             //    getAcceptedJob();
                 handler.postDelayed(this, delay);
 
@@ -141,6 +141,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
     private void initData() {
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
+
       //  Utils.initAdapter(this, acceptedJobsAdapter, rvJobs, false, swipeRefreshLayout);
 
     }
@@ -566,6 +567,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
                     Map<String, String> params = new HashMap<>();
                     params.put (AppConfigTags.HEADER_API_KEY, Constants.api_key);
                     params.put(AppConfigTags.HEADER_USER_LOGIN_KEY, userDetailsPref.getStringPref(AcceptedJobActivity.this, UserDetailsPref.LOGIN_KEY));
+                  //  params.put(AppConfigTags.HEADER_USER_LOGIN_KEY, "5a4341e71c8127f9550d61c8da4809aa");
                     Utils.showLog (Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
                     return params;
                 }
@@ -584,7 +586,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
     }
 
     private void getAcceptedJobId() {
-        if (NetworkConnection.isNetworkAvailable(AcceptedJobActivity.this)) {
+         if (NetworkConnection.isNetworkAvailable(AcceptedJobActivity.this)) {
             //  Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
             Utils.showLog(Log.INFO, "" + AppConfigTags.URL, AppConfigURL.ACCEPTED_JOB_IDS, true);
             StringRequest strRequest1 = new StringRequest(Request.Method.GET, AppConfigURL.ACCEPTED_JOB_IDS,
@@ -635,8 +637,10 @@ public class AcceptedJobActivity extends AppCompatActivity {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
+                    Log.e("LOGIN KEY",userDetailsPref.getStringPref(AcceptedJobActivity.this, UserDetailsPref.LOGIN_KEY));
                     params.put(AppConfigTags.HEADER_API_KEY, Constants.api_key);
-                    params.put(AppConfigTags.USER_LOGIN_KEY, userDetailsPref.getStringPref(AcceptedJobActivity.this, UserDetailsPref.LOGIN_KEY));
+                   // params.put(AppConfigTags.USER_LOGIN_KEY, userDetailsPref.getStringPref(AcceptedJobActivity.this, UserDetailsPref.LOGIN_KEY));
+                    params.put(AppConfigTags.USER_LOGIN_KEY, "5a4341e71c8127f9550d61c8da4809aa");
                     Utils.showLog(Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
                     return params;
                 }

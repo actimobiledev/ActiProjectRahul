@@ -86,7 +86,7 @@ public class RejectedJobActivity extends AppCompatActivity {
         final int delay = 20000; //milliseconds
         handler.postDelayed(new Runnable() {
             public void run() {
-               // getRejectedJobId();
+                getRejectedJobId();
                 handler.postDelayed(this, delay);
 
             }
