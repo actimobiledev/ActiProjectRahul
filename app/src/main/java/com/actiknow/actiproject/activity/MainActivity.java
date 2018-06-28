@@ -24,9 +24,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -96,12 +99,14 @@ public class MainActivity extends AppCompatActivity {
     private View view;
     DatabaseHandler db;
     int position = 0;
-    TextView tvTotalItem;
+    ArrayList<Jobs>tempjob_list = new ArrayList<Jobs>();
     TextView tvTotalJobs;
     int count = 0;
     final Handler handler = new Handler();
     ArrayList<Integer> job_ids = new ArrayList<>();
     boolean first = true;
+    ImageView ivSearch;
+    EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +123,49 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initListener() {
+        ivSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (etSearch.getVisibility()==View.VISIBLE){
+                    etSearch.setVisibility(View.GONE);
+                    etSearch.setText("");
+
+                }else {
+                    etSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                tempjob_list.clear();
+                for(Jobs jobs : jobsList){
+                    if(jobs.getTitle().toLowerCase().contains(cs) || jobs.getTitle().toUpperCase().contains(cs) ||
+                            jobs.getSnippet().toLowerCase().contains(cs) || jobs.getSnippet().toUpperCase().contains(cs)){
+                        tempjob_list.add(jobs);
+                    }
+                }
+                jobsAdapter = new JobsAdapter(MainActivity.this, tempjob_list, 0);
+                rvJobs.setAdapter(jobsAdapter);
+                rvJobs.setHasFixedSize(true);
+                rvJobs.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false));
+                rvJobs.setItemAnimator(new DefaultItemAnimator());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -168,8 +216,10 @@ public class MainActivity extends AppCompatActivity {
         rvJobs = (RecyclerView) findViewById(R.id.rvJobs);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         ivNavigation = (ImageView) findViewById(R.id.ivNavigation);
-        tvTotalItem = (TextView) findViewById(R.id.tvTotalItem);
+      //  tvTotalItem = (TextView) findViewById(R.id.tvTotalItem);
         tvTotalJobs = (TextView) findViewById(R.id.tvTotalJobs);
+        etSearch=(EditText)findViewById(R.id.etSearch);
+        ivSearch=(ImageView)findViewById(R.id.ivSearch);
     }
 
     private void initData() {
@@ -504,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
                                     JSONObject jsonObj = new JSONObject(response);
                                     boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
-                                    tvTotalJobs.setText("Total no. of jobs : " + jsonObj.getInt(AppConfigTags.COUNT));
+                                    tvTotalJobs.setText("Total Jobs : " + jsonObj.getInt(AppConfigTags.COUNT));
 
                                     if (!is_error) {
 

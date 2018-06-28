@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout android:id="@+id/clMain"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clMain"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/text_color_white">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
+        android:background="@color/primary"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:visibility="visible"
         app:elevation="0dp"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed"
-        android:background="@color/primary">
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar1"
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/toolbar1"
             style="@style/Widget.MyApp.ActionBar"
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
@@ -44,8 +43,9 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:padding="@dimen/activity_margin"
-                   android:src="@drawable/ic_drawer"
-                    android:visibility="visible"/>
+                    android:src="@drawable/ic_drawer"
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/tvSearch"
                     android:layout_width="match_parent"
@@ -57,22 +57,21 @@
                     android:text="Actiknow"
                     android:textColor="@color/text_color_white"
                     android:textSize="@dimen/text_size_company_name"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:id="@+id/tvTotalItem"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/circle_background"
-                    android:padding="@dimen/activity_margin_small"
-                    android:text=" 0 "
-                    android:textColor="@color/text_color_white"
-                    android:textStyle="bold"
-                    android:visibility="gone"
                     android:layout_marginRight="@dimen/activity_margin"
-                   android:textSize="@dimen/activity_margin_small" />
+                    android:background="@android:drawable/ic_menu_search"
+                    android:textColor="@color/text_color_white"
+                    android:textSize="@dimen/activity_margin_small"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    />
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
@@ -89,14 +88,30 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-        <TextView
+        <EditText
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_margin"
+            android:layout_marginRight="@dimen/activity_margin"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:background="@drawable/search_background"
+            android:padding="@dimen/activity_margin_small"
+            android:visibility="gone"
+            android:hint="Search Job"
+            android:textSize="@dimen/text_size_extra_small" />
+
+
+        <TextView
             android:id="@+id/tvTotalJobs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etSearch"
             android:paddingLeft="@dimen/activity_margin"
             android:paddingRight="@dimen/activity_margin"
-            android:paddingTop="@dimen/activity_margin"
+            android:paddingTop="@dimen/activity_margin_extra_small"
             android:textColor="@color/text_color_black" />
+
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
@@ -110,8 +125,7 @@
                 android:id="@+id/rvJobs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:overScrollMode="never">
-            </android.support.v7.widget.RecyclerView>
+                android:overScrollMode="never"></android.support.v7.widget.RecyclerView>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -129,7 +143,7 @@
             android:textColor="@color/text_color_white"
             android:textSize="@dimen/text_size_medium"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </RelativeLayout>
 
