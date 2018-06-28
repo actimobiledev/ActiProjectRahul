@@ -159,6 +159,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         c.getInt ((c.getColumnIndex (JOB_JOB_POSTED))),
                         c.getInt ((c.getColumnIndex (JOB_JOB_POST_HIRES))),
                         c.getString ((c.getColumnIndex (JOB_URL))),
+                        "",
                         c.getString ((c.getColumnIndex (CLIENT_TOTAL_JOB_POSTED))),
                         c.getString ((c.getColumnIndex (CLIENT_TOTAL_SPENT))),
                         c.getString ((c.getColumnIndex (CLIENT_TOTAL_JOB_FILLED))),

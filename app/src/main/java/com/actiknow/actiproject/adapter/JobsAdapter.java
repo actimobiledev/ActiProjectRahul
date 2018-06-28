@@ -2,36 +2,21 @@ package com.actiknow.actiproject.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actiknow.actiproject.R;
 import com.actiknow.actiproject.model.Jobs;
 
 import com.actiknow.actiproject.utils.Utils;
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     OnItemClickListener mItemClickListener;
@@ -43,11 +28,12 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     boolean isLoading = false, isMoreDataAvailable = true;
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
+    int type = 0;
 
-
-    public JobsAdapter(Activity activity, List<Jobs> jobsList) {
+    public JobsAdapter(Activity activity, List<Jobs> jobsList, int type) {
         this.activity = activity;
         this.jobsList = jobsList;
+        this.type = type;
     }
 
     @Override
@@ -69,10 +55,6 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /*final LayoutInflater mInflater = LayoutInflater.from(parent.getContext());
-        final View sView = mInflater.inflate(R.layout.list_item_jobs_list, parent, false);
-        return new ViewHolder(sView);*/
-
         if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_jobs_list, parent, false);
             return new ViewHolder2(view, onItemClickListener);
@@ -99,18 +81,19 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Utils.setTypefaceToAllViews(activity, viewHolder2.tvTitle);
             viewHolder2.tvTitle.setText(jobs.getTitle());
             if (jobs.getStatus().length() > 0) {
-                viewHolder2.tvCountryName.setText(jobs.getCountry() + ", " + jobs.getStatus() + ", " + jobs.getBudget());
+                viewHolder2.tvCountryName.setText(jobs.getCountry() + ", " + jobs.getBudget() + ", " + jobs.getTotal_spent());
             } else {
-                viewHolder2.tvCountryName.setText(jobs.getCountry() + ", " + "NA" + ", " + jobs.getBudget());
+                viewHolder2.tvCountryName.setText(jobs.getCountry() + ", " + jobs.getBudget() + ", " + "NA");
             }
             viewHolder2.tvStatus.setText(jobs.getSnippet());
-            // holder.tvBudget.setText("Job Budget : " + jobs.getBudget());
-
-            viewHolder2.tvJobPosted.setText("Job Posted : " + jobs.getJob_post() + "  |  ");
-            viewHolder2.tvJobFilled.setText("Job Filled : " + jobs.getTotal_job_filled() + "  |  " + jobs.getClient_job_percent());
-            viewHolder2.tvTotalHour.setText("Hours : " + jobs.getTotal_hours() + "  |  ");
-            viewHolder2.tvTotalSpent.setText("Spent : " + jobs.getTotal_spent());
-            viewHolder2.tvMemberSince.setText(jobs.getClient_member_since());
+            viewHolder2.tvJobPosted.setText(jobs.getJob_post() + "  |  "+ jobs.getTotal_job_filled() + "  |  " + jobs.getClient_job_percent());
+            viewHolder2.tvTotalHour.setText(jobs.getTotal_hours() + "  |  "+jobs.getClient_member_since());
+            viewHolder2.tvSnippet.setText(jobs.getSnippet());
+            viewHolder2.tvRejectedBy.setVisibility(View.GONE);
+            if(type == 2) {
+                viewHolder2.tvRejectedBy.setVisibility(View.VISIBLE);
+                viewHolder2.tvRejectedBy.setText("Rejected By: " + jobs.getRejected_by());
+            }
         }
     }
 
@@ -171,10 +154,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      //   TextView tvBudget;
 
         TextView tvJobPosted;
-        TextView tvJobFilled;
         TextView tvTotalHour;
-        TextView tvTotalSpent;
-        TextView tvMemberSince;
+        TextView tvSnippet;
+        TextView tvRejectedBy;
 
 
         public RelativeLayout rlMain;
@@ -187,13 +169,10 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvTitle = (TextView) view.findViewById(R.id.tvTitle);
             tvCountryName = (TextView) view.findViewById(R.id.tvCountryName);
             tvStatus = (TextView) view.findViewById(R.id.tvStatus);
-         //   tvBudget = (TextView) view.findViewById(R.id.tvBudget);
-
             tvJobPosted = (TextView) view.findViewById(R.id.tvJobPosted);
-            tvJobFilled = (TextView) view.findViewById(R.id.tvJobFilled);
             tvTotalHour = (TextView) view.findViewById(R.id.tvTotalHour);
-            tvTotalSpent = (TextView) view.findViewById(R.id.tvTotalSpent);
-            tvMemberSince = (TextView) view.findViewById(R.id.tvMemberSince);
+            tvSnippet = (TextView) view.findViewById(R.id.tvSnippet);
+            tvRejectedBy = (TextView) view.findViewById(R.id.tvRejectedBy);
             rlMain = (RelativeLayout) view.findViewById(R.id.rlMain);
             view.setOnClickListener(this);
             this.onItemClickListener = onItemClickListener;

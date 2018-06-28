@@ -23,10 +23,9 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.actiknow.actiproject.R;
-import com.actiknow.actiproject.adapter.RejectedJobsAdapter;
+import com.actiknow.actiproject.adapter.JobsAdapter;
 import com.actiknow.actiproject.dialogFragment.JobDetailFragment;
-import com.actiknow.actiproject.model.AcceptedJobs;
-import com.actiknow.actiproject.model.RejectedJobs;
+import com.actiknow.actiproject.model.Jobs;
 import com.actiknow.actiproject.utils.AppConfigTags;
 import com.actiknow.actiproject.utils.AppConfigURL;
 import com.actiknow.actiproject.utils.Constants;
@@ -47,23 +46,23 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 public class RejectedJobActivity extends AppCompatActivity {
     RecyclerView rvJobs;
     UserDetailsPref userDetailsPref;
     CoordinatorLayout clMain;
-    RejectedJobsAdapter rejectedJobsAdapter;
+    JobsAdapter rejectedJobsAdapter;
     ProgressDialog progressDialog;
     ImageView ivBack;
     String arrayResponse;
     private Paint p = new Paint();
     private View view;
-    List<RejectedJobs> rejectedJobsList = new ArrayList<>();
+    ArrayList<Jobs> rejectedJobsList = new ArrayList<>();
     final Handler handler = new Handler();
     ArrayList<Integer> job_ids = new ArrayList<>();
     int count = 0;
+    boolean first = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +81,7 @@ public class RejectedJobActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-
-        final int delay = 20000; //milliseconds
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                getRejectedJobId();
-                handler.postDelayed(this, delay);
-
-            }
-        }, delay);
+        rejectedJobsList2(0);
     }
 
     protected void onPause() {
@@ -111,12 +102,22 @@ public class RejectedJobActivity extends AppCompatActivity {
 
 
 
-        rejectedJobsAdapter.SetOnItemClickListener(new RejectedJobsAdapter.OnItemClickListener() {
+        rejectedJobsAdapter.SetOnItemClickListener(new JobsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                RejectedJobs rejectedJobs = rejectedJobsList.get(position);
+                Jobs rejectedJobs = rejectedJobsList.get(position);
                 android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-                JobDetailFragment dialog = new JobDetailFragment().newInstance(rejectedJobs.getId(),rejectedJobs.getJob_id(), 2);
+                JobDetailFragment dialog = new JobDetailFragment().newInstance(rejectedJobs.getId(),rejectedJobs.getJob_id(), 2, rejectedJobsList);
+                dialog.setOnDialogResultListener(new JobDetailFragment.OnDialogResultListener() {
+                    @Override
+                    public void onDismiss() {
+                        if(userDetailsPref.getIntPref(RejectedJobActivity.this, AppConfigTags.POSITION) != -1){
+                            rejectedJobsAdapter.removeItem(userDetailsPref.getIntPref(RejectedJobActivity.this, AppConfigTags.POSITION));
+                            rejectedJobsAdapter.notifyDataChanged();
+                        }
+                        userDetailsPref.putIntPref(RejectedJobActivity.this, AppConfigTags.POSITION, -1);
+                    }
+                });
                 dialog.show(ft, "jobs");
 
             }
@@ -124,7 +125,7 @@ public class RejectedJobActivity extends AppCompatActivity {
     }
 
     private void initAdapter() {
-        rejectedJobsAdapter = new RejectedJobsAdapter(RejectedJobActivity.this, rejectedJobsList);
+        rejectedJobsAdapter = new JobsAdapter(RejectedJobActivity.this, rejectedJobsList,2);
         rvJobs.setAdapter(rejectedJobsAdapter);
         rvJobs.setHasFixedSize(true);
         rvJobs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -143,53 +144,6 @@ public class RejectedJobActivity extends AppCompatActivity {
     private void initData() {
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
-       // String response = userDetailsPref.getStringPref(this, UserDetailsPref.RESPONSE);
-      /*  if (response != null) {
-
-            try {
-                arrayResponse = response;
-                JSONObject jsonObj = new JSONObject(response);
-                boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
-                String message = jsonObj.getString(AppConfigTags.MESSAGE);
-                if (!is_error) {
-
-                    JSONArray jsonArrayRejectedJobs = jsonObj.getJSONArray(AppConfigTags.REJECTED_JOB);
-                    for (int i = 0; i < jsonArrayRejectedJobs.length(); i++) {
-                        JSONObject jsonObjectRejectedJobs = jsonArrayRejectedJobs.getJSONObject(i);
-                        rejectedJobsList.add(new RejectedJobs(jsonObjectRejectedJobs.getInt(AppConfigTags.ID),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_ID),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_TITLE),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_BUDGET),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_SNIPPET),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_COUNTRY),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_SKILL),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
-                                jsonObjectRejectedJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
-                                jsonObjectRejectedJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.JOB_URL),
-                                jsonObjectRejectedJobs.getString(AppConfigTags.REJECTED_BY)));
-
-                    }
-
-                    //RejectedJobsAdapter.notifyDataSetChanged();
-                    rejectedJobsAdapter = new RejectedJobsAdapter(RejectedJobActivity.this, rejectedJobsList);
-                    rvJobs.setAdapter(rejectedJobsAdapter);
-                    rvJobs.setHasFixedSize(true);
-                    rvJobs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-                    rvJobs.setItemAnimator(new DefaultItemAnimator());
-                    rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
-                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-                    itemTouchHelper.attachToRecyclerView(rvJobs);
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Utils.showSnackBar2(RejectedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
-            }
-        } else {
-            Utils.showSnackBar2(RejectedJobActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
-            Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
-        }*/
     }
 
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -204,7 +158,7 @@ public class RejectedJobActivity extends AppCompatActivity {
 
             Log.e("ID",""+rejectedJobsList.get(position).getId()+ "JOB_ID - " + rejectedJobsList.get(position).getJob_id());
             acceptJob(String.valueOf(rejectedJobsList.get(position).getId()), rejectedJobsList.get(position).getJob_id());
-            final RejectedJobs deletedItem = rejectedJobsList.get(viewHolder.getAdapterPosition());
+            final Jobs deletedItem = rejectedJobsList.get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
             rejectedJobsAdapter.removeItem(position);
             Snackbar snackbar = Snackbar.make(clMain, "Job Rejected", Snackbar.LENGTH_LONG);
@@ -265,36 +219,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                                     boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     if (!error) {
-                                      //  rejectedJobsAdapter.notifyDataSetChanged();
-                                        /*rejectedJobsList.clear();
-                                        JSONArray jsonArrayRejectedJobs = jsonObj.getJSONArray(AppConfigTags.REJECTED_JOB);
-                                        for (int i = 0; i < jsonArrayRejectedJobs.length(); i++) {
-                                            JSONObject jsonObjectRejectedJobs = jsonArrayRejectedJobs.getJSONObject(i);
-                                            rejectedJobsList.add(new RejectedJobs(jsonObjectRejectedJobs.getInt(AppConfigTags.ID),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_ID),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_TITLE),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_BUDGET),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_SNIPPET),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_COUNTRY),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
-                                                    jsonObjectRejectedJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
-                                                    jsonObjectRejectedJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.JOB_URL),
-                                                    jsonObjectRejectedJobs.getString(AppConfigTags.REJECTED_BY)));
-
-                                        }
-
-                                        //RejectedJobsAdapter.notifyDataSetChanged();
-                                        rejectedJobsAdapter = new RejectedJobsAdapter(RejectedJobActivity.this, rejectedJobsList);
-                                        rvJobs.setAdapter(rejectedJobsAdapter);
-                                        rvJobs.setHasFixedSize(true);
-                                        rvJobs.setLayoutManager(new LinearLayoutManager(RejectedJobActivity.this, LinearLayoutManager.VERTICAL, false));
-                                        rvJobs.setItemAnimator(new DefaultItemAnimator());
-                                        rvJobs.addItemDecoration(new RecyclerViewMargin((int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), (int) Utils.pxFromDp(RejectedJobActivity.this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
-                                        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-                                        itemTouchHelper.attachToRecyclerView(rvJobs);*/
                                         Utils.showSnackBar2 (RejectedJobActivity.this, clMain, message, Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
-
                                     }
                                     progressDialog.dismiss ();
                                 } catch (Exception e) {
@@ -378,7 +303,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                                         JSONArray jsonArrayRejectedJobs = jsonObj.getJSONArray(AppConfigTags.REJECTED_JOB);
                                         for (int i = 0; i < jsonArrayRejectedJobs.length(); i++) {
                                             JSONObject jsonObjectRejectedJobs = jsonArrayRejectedJobs.getJSONObject(i);
-                                            rejectedJobsList.add(new RejectedJobs(jsonObjectRejectedJobs.getInt(AppConfigTags.ID),
+                                            rejectedJobsList.add(new Jobs(jsonObjectRejectedJobs.getInt(AppConfigTags.ID),
                                                     jsonObjectRejectedJobs.getString(AppConfigTags.JOB_ID),
                                                     jsonObjectRejectedJobs.getString(AppConfigTags.JOB_TITLE),
                                                     jsonObjectRejectedJobs.getString(AppConfigTags.JOB_BUDGET),
@@ -457,7 +382,7 @@ public class RejectedJobActivity extends AppCompatActivity {
     public void rejectedJobsList2(final int offset) {
         if (NetworkConnection.isNetworkAvailable(RejectedJobActivity.this)) {
             if (offset > 0) {
-                rejectedJobsList.add(new RejectedJobs());
+                rejectedJobsList.add(new Jobs());
                 rejectedJobsAdapter.notifyItemInserted(rejectedJobsList.size() - 1);
             }
             Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.REJECTED_JOBS2+"/"+offset, true);
@@ -487,7 +412,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                                         JSONArray jsonArrayRejectedJobs = jsonObj.getJSONArray(AppConfigTags.REJECTED_JOB);
                                         for (int i = 0; i < jsonArrayRejectedJobs.length(); i++) {
                                             JSONObject jsonObjectRejectedJobs = jsonArrayRejectedJobs.getJSONObject(i);
-                                            rejectedJobsList.add(new RejectedJobs(jsonObjectRejectedJobs.getInt(AppConfigTags.ID),
+                                            rejectedJobsList.add(new Jobs(jsonObjectRejectedJobs.getInt(AppConfigTags.ID),
                                                     jsonObjectRejectedJobs.getString(AppConfigTags.JOB_ID),
                                                     jsonObjectRejectedJobs.getString(AppConfigTags.JOB_TITLE),
                                                     jsonObjectRejectedJobs.getString(AppConfigTags.JOB_BUDGET),
@@ -517,6 +442,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                                         }
                                         rejectedJobsAdapter.notifyDataChanged();
                                         progressDialog.dismiss();
+                                        handler();
                                     } else {
                                         rejectedJobsAdapter.setMoreDataAvailable(true);
                                         Utils.showSnackBar(RejectedJobActivity.this, clMain, "Error occurred",
@@ -653,7 +579,7 @@ public class RejectedJobActivity extends AppCompatActivity {
                                             JSONObject jsonObjectJobIds = jsonArrayJobIds.getJSONObject(i);
                                             job_ids.add(jsonObjectJobIds.getInt(AppConfigTags.ID));
                                             int k = 0;
-                                            for (RejectedJobs jobs : rejectedJobsList) {
+                                            for (Jobs jobs : rejectedJobsList) {
                                                 if (jsonObjectJobIds.getInt(AppConfigTags.ID) == jobs.getId()) {
                                                     rejectedJobsAdapter.removeItem(k);
                                                 }
@@ -692,6 +618,19 @@ public class RejectedJobActivity extends AppCompatActivity {
                 }
             };
             Utils.sendRequest(strRequest1, 60);
+        }
+    }
+
+    public void handler(){
+        if(first){
+            final int delay = 20000; //milliseconds
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    getRejectedJobId();
+                    handler.postDelayed(this, delay);
+
+                }
+            }, delay);
         }
     }
 }

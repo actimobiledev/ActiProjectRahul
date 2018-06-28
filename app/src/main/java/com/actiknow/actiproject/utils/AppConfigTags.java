@@ -27,6 +27,7 @@ public class AppConfigTags {
     public static final String MATCH = "match";
     public static final String USER_EXIST = "user_exist";
     public static final String STATUS = "status";
+    public static final String POSITION = "position";
 
     public static final String PASSWORD = "password";
     public static final String USER_ID = "user_id";
@@ -75,6 +76,7 @@ public class AppConfigTags {
   //  public static final String JOB_SKILLS = "job_skills";
     public static final String SKILL_NAME = "skill_name";
     public static final String REJECTED_BY = "rejected_by";
+    public static final String COUNT = "count";
 
 
 }

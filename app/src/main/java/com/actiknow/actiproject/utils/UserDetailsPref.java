@@ -11,6 +11,8 @@ public class UserDetailsPref {
     public static final String MOBILE = "mobile";
     public static final String LOGIN_KEY = "login_key";
     public static final String RESPONSE = "response";
+    public static final String JOB_LIST = "job_list";
+    public static final String POSITION = "position";
     private static UserDetailsPref userDetailsPref;
     private String USER_DETAILS = "USER_DETAILS";
     

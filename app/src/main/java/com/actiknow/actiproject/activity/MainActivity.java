@@ -11,13 +11,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -25,26 +22,19 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.EventLogTags;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actiknow.actiproject.R;
 import com.actiknow.actiproject.adapter.JobsAdapter;
 import com.actiknow.actiproject.dialogFragment.JobDetailFragment;
 import com.actiknow.actiproject.helper.DatabaseHandler;
-import com.actiknow.actiproject.model.AcceptedJobs;
 import com.actiknow.actiproject.model.Jobs;
-import com.actiknow.actiproject.model.RejectedJobs;
 import com.actiknow.actiproject.utils.AppConfigTags;
 import com.actiknow.actiproject.utils.AppConfigURL;
 import com.actiknow.actiproject.utils.Constants;
@@ -85,9 +75,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 public class MainActivity extends AppCompatActivity {
     private AccountHeader headerResult = null;
@@ -99,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     UserDetailsPref userDetailsPref;
     CoordinatorLayout clMain;
     JobsAdapter jobsAdapter;
-    List<Jobs> jobsList = new ArrayList<>();
+    ArrayList<Jobs> jobsList = new ArrayList<>();
     ProgressDialog progressDialog;
     ImageView ivNavigation;
     Bundle savedInstanceState;
@@ -113,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     int count = 0;
     final Handler handler = new Handler();
     ArrayList<Integer> job_ids = new ArrayList<>();
+    boolean first = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,11 +131,15 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 Jobs jobs = jobsList.get(position);
                 android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
-                JobDetailFragment dialog = new JobDetailFragment().newInstance(jobs.getId(), jobs.getJob_id(), 0);
+                JobDetailFragment dialog = new JobDetailFragment().newInstance(jobs.getId(), jobs.getJob_id(), 0, jobsList);
                 dialog.setOnDialogResultListener(new JobDetailFragment.OnDialogResultListener() {
                     @Override
                     public void onDismiss() {
-                        jobsList(0);
+                        if(userDetailsPref.getIntPref(MainActivity.this, AppConfigTags.POSITION) != -1){
+                            jobsAdapter.removeItem(userDetailsPref.getIntPref(MainActivity.this, AppConfigTags.POSITION));
+                            jobsAdapter.notifyDataChanged();
+                        }
+                        userDetailsPref.putIntPref(MainActivity.this, AppConfigTags.POSITION, -1);
                     }
                 });
                 dialog.show(ft, "jobs");
@@ -194,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         final int delay = 20000; //milliseconds
         handler.postDelayed(new Runnable() {
             public void run() {
-                getJobId();
+        //        getJobId();
                 handler.postDelayed(this, delay);
                 }
         }, delay);
@@ -206,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
     private void initAdapter() {
-        jobsAdapter = new JobsAdapter(MainActivity.this, jobsList);
+        jobsAdapter = new JobsAdapter(MainActivity.this, jobsList, 0);
         rvJobs.setAdapter(jobsAdapter);
         rvJobs.setHasFixedSize(true);
         rvJobs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -491,7 +484,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void jobsList(final int offset) {
-
         // swipeRefreshLayout.setRefreshing(true);
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
             if (offset > 0) {
@@ -512,6 +504,8 @@ public class MainActivity extends AppCompatActivity {
                                     JSONObject jsonObj = new JSONObject(response);
                                     boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
+                                    tvTotalJobs.setText("Total no. of jobs : " + jsonObj.getInt(AppConfigTags.COUNT));
+
                                     if (!is_error) {
 
                                         Log.e("JobList", "" + jobsList.size());
@@ -538,6 +532,7 @@ public class MainActivity extends AppCompatActivity {
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
                                                     jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
                                                     jsonObjectJobs.getString(AppConfigTags.JOB_URL),
+                                                    "",
                                                     jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED),
                                                     jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT),
                                                     jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED),
@@ -547,7 +542,7 @@ public class MainActivity extends AppCompatActivity {
 
                                             ));
                                         }
-                                        tvTotalJobs.setText("Total no. of jobs : " + jobsList.size());
+
 
                                         db.insertAllJobs(jobsList);
 
@@ -562,7 +557,8 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                         //  jobsAdapter.notifyDataSetChanged();
                                         jobsAdapter.notifyDataChanged();
-
+                                        userDetailsPref.putStringPref(MainActivity.this, UserDetailsPref.JOB_LIST, String.valueOf(jobsList));
+                                        handler();
                                     } else {
                                         jobsAdapter.setMoreDataAvailable(true);
                                         Utils.showSnackBar(
@@ -699,18 +695,7 @@ public class MainActivity extends AppCompatActivity {
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!error) {
                                         Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
-                                        //finish();
-                                        //startActivity(getIntent());
                                         jobsList(0);
-                                        /*userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.ID, jsonObj.getString (AppConfigTags.USER_ID));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.NAME, jsonObj.getString (AppConfigTags.USER_NAME));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.EMAIL, jsonObj.getString (AppConfigTags.USER_EMAIL));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.MOBILE, jsonObj.getString (AppConfigTags.USER_MOBILE));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.LOGIN_KEY, jsonObj.getString (AppConfigTags.USER_LOGIN_KEY));
-                                        Intent intent = new Intent(MainActivity.this,MainActivity.class);
-                                        startActivity(intent);
-                                        finish ();
-                                        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);*/
                                     } else {
                                         Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                     }
@@ -787,18 +772,7 @@ public class MainActivity extends AppCompatActivity {
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!error) {
                                         Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
-                                        // finish();
-                                        // startActivity(getIntent());
                                         jobsList(0);
-                                        /*userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.ID, jsonObj.getString (AppConfigTags.USER_ID));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.NAME, jsonObj.getString (AppConfigTags.USER_NAME));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.EMAIL, jsonObj.getString (AppConfigTags.USER_EMAIL));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.MOBILE, jsonObj.getString (AppConfigTags.USER_MOBILE));
-                                        userDetailsPref.putStringPref (MainActivity.this, UserDetailsPref.LOGIN_KEY, jsonObj.getString (AppConfigTags.USER_LOGIN_KEY));
-                                        Intent intent = new Intent(MainActivity.this,MainActivity.class);
-                                        startActivity(intent);
-                                        finish ();
-                                        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);*/
                                     } else {
                                         Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                     }
@@ -929,5 +903,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void handler(){
+        if(true){
+            final int delay = 20000; //milliseconds
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    getJobId();
+                    handler.postDelayed(this, delay);
 
+                }
+            }, delay);
+        }
+    }
 }
