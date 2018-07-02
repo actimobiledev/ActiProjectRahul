@@ -223,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-
         db = new DatabaseHandler(MainActivity.this);
         swipeRefreshLayout.setRefreshing(true);
         userDetailsPref = UserDetailsPref.getInstance();

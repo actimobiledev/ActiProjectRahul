@@ -10,8 +10,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actiknow.actiproject.R;
+import com.actiknow.actiproject.dialogFragment.JobDetailFragment;
 import com.actiknow.actiproject.model.Jobs;
 
+import com.actiknow.actiproject.utils.AppConfigTags;
+import com.actiknow.actiproject.utils.UserDetailsPref;
 import com.actiknow.actiproject.utils.Utils;
 
 
@@ -21,7 +24,7 @@ import java.util.List;
 public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     OnItemClickListener mItemClickListener;
     private Activity activity;
-    private List<Jobs> jobsList = new ArrayList<Jobs>();
+    private ArrayList<Jobs> jobsList = new ArrayList<Jobs>();
     ProgressBar progressDialog;
     OnItemClickListener onItemClickListener;
     OnLoadMoreListener loadMoreListener;
@@ -29,8 +32,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     int type = 0;
+    UserDetailsPref userDetailsPref;
 
-    public JobsAdapter(Activity activity, List<Jobs> jobsList, int type) {
+    public JobsAdapter(Activity activity, ArrayList<Jobs> jobsList, int type) {
         this.activity = activity;
         this.jobsList = jobsList;
         this.type = type;
@@ -180,10 +184,27 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
         public void onClick(View v) {
+            userDetailsPref = UserDetailsPref.getInstance();
             // final Jobs jobDescription = bookingList.get (getLayoutPosition ());
             // activity.overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
-            mItemClickListener.onItemClick(v, getLayoutPosition());
-
+            if(mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getLayoutPosition());
+            }else{
+                Jobs jobs = jobsList.get(getLayoutPosition());
+                android.app.FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+                JobDetailFragment dialog = new JobDetailFragment().newInstance(jobs.getId(), jobs.getJob_id(), 0, jobsList);
+                dialog.setOnDialogResultListener(new JobDetailFragment.OnDialogResultListener() {
+                    @Override
+                    public void onDismiss() {
+                        if(userDetailsPref.getIntPref(activity, AppConfigTags.POSITION) != -1){
+                            removeItem(userDetailsPref.getIntPref(activity, AppConfigTags.POSITION));
+                            notifyDataChanged();
+                        }
+                        userDetailsPref.putIntPref(activity, AppConfigTags.POSITION, -1);
+                    }
+                });
+                dialog.show(ft, "jobs");
+            }
         }
     }
 }

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    card_view:cardCornerRadius="@dimen/cardview_default_radius"
-                                    card_view:cardElevation="@dimen/cardview_elevation">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="@dimen/cardview_default_radius"
+    card_view:cardElevation="@dimen/cardview_elevation">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/rlMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/rlMain">
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,11 +32,11 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
 
+                    android:paddingBottom="5dp"
                     android:text="Title"
                     android:textColor="@color/text_color_black"
                     android:textSize="@dimen/text_size_medium"
-                    android:visibility="visible"
-                    android:paddingBottom="5dp"/>
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/tvCountryName"
@@ -58,13 +59,13 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvCountryName"
                     android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"
+                    android:ellipsize="end"
+                    android:maxLines="3"
                     android:text="Payment Status"
                     android:textColor="@color/secondary_text"
                     android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="gone"
-                    android:ellipsize="end"
-                    android:maxLines="3"
-                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+                    android:visibility="gone" />
 
 
                 <TextView
@@ -75,11 +76,11 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvStatus"
                     android:layout_gravity="right"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"
                     android:text="JobPosted"
-                    android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="visible"
                     android:textColor="@color/secondary_text"
-                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible" />
 
 
                 <TextView
@@ -90,24 +91,24 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvJobPosted"
                     android:layout_gravity="right"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"
                     android:text="Total hours"
-                    android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="visible"
                     android:textColor="@color/secondary_text"
-                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/tvSnippet"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvTotalHour"
-                    android:text="Description"
-                    android:textSize="@dimen/text_size_extra_small"
-                    android:maxLines="3"
+                    android:layout_marginTop="@dimen/activity_margin_extra_small"
                     android:ellipsize="end"
-                    android:visibility="visible"
+                    android:maxLines="3"
+                    android:text="Description"
                     android:textColor="@color/secondary_text"
-                    android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+                    android:textSize="@dimen/text_size_extra_small"
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/tvRejectedBy"
@@ -117,18 +118,17 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/tvSnippet"
                     android:layout_gravity="center"
-                    android:text="By. Sumit Jhunjhuwala"
                     android:layout_marginRight="8dp"
+                    android:layout_marginTop="5dp"
+                    android:gravity="right"
+                    android:text="By. Sumit Jhunjhuwala"
                     android:textColor="@color/primary"
                     android:textSize="@dimen/text_size_extra_small"
-                    android:visibility="gone"
-                    android:gravity="right"
-                    android:layout_marginTop="5dp"/>
+                    android:visibility="gone" />
 
 
             </RelativeLayout>
         </RelativeLayout>
-
 
 
     </RelativeLayout>
