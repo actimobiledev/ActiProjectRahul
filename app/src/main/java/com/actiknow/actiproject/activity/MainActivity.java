@@ -539,6 +539,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void jobsList(final int offset) {
         // swipeRefreshLayout.setRefreshing(true);
+        Log.e("list", "list");
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
             if (offset > 0) {
                 jobsList.add(new Jobs());
@@ -974,11 +975,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void jobsListSearch() {
      //   swipeRefreshLayout.setRefreshing(true);
+        Log.e("search", "search");
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
             jobsList.clear();
-            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS_SEARCH +"/"+ etSearch.getText().toString(), true);
+            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS_SEARCH, true);
             Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
-            StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS_SEARCH +"/"+ etSearch.getText().toString(),
+            StringRequest strRequest = new StringRequest(Request.Method.POST, AppConfigURL.JOBS_SEARCH,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -1016,13 +1018,7 @@ public class MainActivity extends AppCompatActivity {
 
                                             ));
                                         }
-
-
-                                        jobsAdapter = new JobsAdapter(MainActivity.this, jobsList, 0);
-                                        rvJobs.setAdapter(jobsAdapter);
-                                        rvJobs.setHasFixedSize(true);
-                                        rvJobs.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false));
-                                        rvJobs.setItemAnimator(new DefaultItemAnimator());
+                                        jobsAdapter.notifyDataChanged();
                                         progressDialog.dismiss();
                                     }
                                 } catch (Exception e) {
@@ -1046,12 +1042,14 @@ public class MainActivity extends AppCompatActivity {
                                 Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
                             }
                             Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                            progressDialog.dismiss();
                         }
                     }) {
 
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String>();
+                    params.put(AppConfigTags.SEARCH_TEXT,etSearch.getText().toString());
                     Utils.showLog(Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }

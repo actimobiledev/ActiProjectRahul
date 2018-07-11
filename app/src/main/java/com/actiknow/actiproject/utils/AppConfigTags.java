@@ -77,6 +77,7 @@ public class AppConfigTags {
     public static final String SKILL_NAME = "skill_name";
     public static final String REJECTED_BY = "rejected_by";
     public static final String COUNT = "count";
+    public static final String SEARCH_TEXT = "search_text";
 
 
 }
