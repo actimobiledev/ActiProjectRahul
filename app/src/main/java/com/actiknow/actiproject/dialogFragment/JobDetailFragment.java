@@ -52,6 +52,7 @@ public class JobDetailFragment extends DialogFragment {
     TextView tvJobSnippet;
     TextView tvUrl;
     TextView tvSkills;
+    TextView tvTitle;
     ImageView ivCancel;
     ProgressDialog progressDialog;
     UserDetailsPref userDetailsPref;
@@ -144,6 +145,8 @@ public class JobDetailFragment extends DialogFragment {
 
     private void initView(View root) {
         tvJobTitle = (TextView) root.findViewById(R.id.tvJobTitle);
+        tvTitle = (TextView) root.findViewById(R.id.tvTitle);
+
         tvCountryName = (TextView) root.findViewById(R.id.tvCountryName);
         tvPaymentStatus = (TextView) root.findViewById(R.id.tvPaymentStatus);
         tvBudget = (TextView) root.findViewById(R.id.tvBudget);
@@ -237,14 +240,15 @@ public class JobDetailFragment extends DialogFragment {
             Jobs jobs = job_list.get(i);
             if (jobs.getJob_id().equalsIgnoreCase(job_id)) {
                 tvJobTitle.setText(jobs.getTitle());
+                tvTitle.setText(jobs.getTitle());
                 tvCountryName.setText("Country Name  : " + jobs.getCountry());
                 tvPaymentStatus.setText("Payment Status : " + jobs.getStatus());
                 tvBudget.setText("Job Budget       : " + jobs.getBudget());
                 tvUrl.setText(jobs.getJob_url());
                 tvJobPosted.setText("Job Posted : " + jobs.getJob_post()+"  |  ");
                 tvJobHired.setText("Job Hire  : " + jobs.getJob_hire());
-                tvJobSnippet.setText("Job Posted: " + jobs.getSnippet());
-                tvSkills.setText(jobs.getSkill());
+                tvJobSnippet.setText("Job Snippet  : " + jobs.getSnippet());
+                tvSkills.setText("Skills  :  "+jobs.getSkill());
                 tvJobPosted2.setText("Job Posted : "+jobs.getTotal_job_posted()+"  |  ");
                 tvJobFilled.setText("Job Filled : "+jobs.getTotal_job_filled()+"  |  "+jobs.getClient_job_percent());
                 tvTotalHour.setText("Hours : "+jobs.getTotal_hours()+"  |  ");

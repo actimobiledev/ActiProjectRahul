@@ -16,7 +16,8 @@
         app:elevation="0dp"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.Toolbar
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/toolbar1"
             style="@style/Widget.MyApp.ActionBar"
             android:layout_width="match_parent"
@@ -33,7 +34,8 @@
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/ivNavigation"
@@ -46,18 +48,19 @@
                     android:src="@drawable/ic_drawer"
                     android:visibility="visible" />
 
-                <TextView
-                    android:id="@+id/tvSearch"
+                <EditText
+                    android:id="@+id/etSearch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/ivNavigation"
+                    android:layout_toLeftOf="@+id/ivSearch"
                     android:layout_toRightOf="@+id/ivNavigation"
-                    android:gravity="center_vertical"
-                    android:text="Actiknow"
+                    android:inputType="text"
                     android:textColor="@color/text_color_white"
-                    android:textSize="@dimen/text_size_company_name"
-                    android:textStyle="bold" />
+                    android:textSize="@dimen/text_size_medium"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    android:background="@drawable/et_search_underline" />
 
                 <ImageView
                     android:id="@+id/ivSearch"
@@ -72,6 +75,9 @@
                     android:textStyle="bold"
                     android:visibility="visible" />
             </RelativeLayout>
+
+
+
         </android.support.v7.widget.Toolbar>
 
         <View
@@ -87,7 +93,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-        <EditText
+       <!-- <EditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,15 +103,31 @@
             android:background="@drawable/search_background"
             android:padding="@dimen/activity_margin_small"
             android:visibility="gone"
+            android:layout_toLeftOf="@+id/tvSearchText"
             android:hint="Search Job"
             android:textSize="@dimen/text_size_extra_small" />
 
+        <TextView
+            android:id="@+id/tvSearchText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="Search"
+            android:visibility="gone"
+            android:textStyle="bold"
+            android:layout_marginRight="5dp"
+            android:gravity="center_vertical"
+            android:layout_alignTop="@+id/etSearch"
+            android:layout_alignBottom="@+id/etSearch"
+            />
 
+-->
         <TextView
             android:id="@+id/tvTotalJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etSearch"
+
             android:paddingLeft="@dimen/activity_margin"
             android:paddingRight="@dimen/activity_margin"
             android:paddingTop="@dimen/activity_margin_extra_small"

@@ -10,8 +10,8 @@
 
         <ImageView
             android:id="@+id/ivCancel"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:padding="@dimen/activity_margin"
             android:src="@drawable/ic_close" />
 
@@ -21,12 +21,13 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/ivCancel"
             android:layout_alignTop="@+id/ivCancel"
-            android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="Job Details"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/text_size_large"
-            android:textStyle="bold" />
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/ivCancel"
+            android:paddingRight="5dp"/>
 
         <View
             android:id="@+id/v1"
@@ -68,7 +69,7 @@
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
 
                     <TextView
@@ -136,12 +137,13 @@
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/llPickDropInfo">
+                        android:layout_below="@+id/llPickDropInfo"
+                        android:visibility="gone">
 
 
                     <TextView
@@ -186,7 +188,7 @@
                             android:textColor="@color/primary_text"
                             android:textSize="@dimen/text_size_medium"
                             android:textStyle="bold"
-                            android:visibility="visible" />
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/tvJobPosted2"
@@ -200,7 +202,7 @@
                             android:textSize="@dimen/text_size_extra_small"
                             android:visibility="visible"
                             android:textColor="@color/secondary_text"
-                            android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+                            android:layout_marginTop="@dimen/activity_margin"/>
 
 
 
@@ -214,7 +216,7 @@
                             android:visibility="visible"
                             android:textColor="@color/secondary_text"
                             android:layout_toRightOf="@+id/tvJobPosted2"
-                            android:layout_marginTop="@dimen/activity_margin_extra_small"/>
+                            android:layout_marginTop="@dimen/activity_margin"/>
 
 
                         <TextView
@@ -274,7 +276,7 @@
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tvUrl"
@@ -299,7 +301,7 @@
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tvSkills"
@@ -326,7 +328,7 @@
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/text_size_medium"
                         android:textStyle="bold"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
                 </LinearLayout>
 
 
@@ -358,7 +360,8 @@
                             android:text="...Loading"
                             android:textColor="@color/secondary_text"
                             android:textSize="@dimen/text_size_extra_small"
-                            android:visibility="visible" />
+                            android:visibility="visible"
+                            android:paddingBottom="10dp"/>
 
 
                     </LinearLayout>

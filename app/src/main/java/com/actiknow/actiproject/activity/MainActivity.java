@@ -29,6 +29,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -106,12 +107,14 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> job_ids = new ArrayList<>();
     boolean first = true;
     ImageView ivSearch;
+    TextView tvSearchText;
     EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initView();
         initData();
         initAdapter();
@@ -123,53 +126,51 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initListener() {
+
         ivSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (etSearch.getVisibility()==View.VISIBLE){
+               /* if (etSearch.getVisibility()==View.VISIBLE){
                     etSearch.setVisibility(View.GONE);
+                    tvSearchText.setVisibility(View.GONE);
                     etSearch.setText("");
 
                 }else {
                     etSearch.setVisibility(View.VISIBLE);
-                }
+                    tvSearchText.setVisibility(View.VISIBLE);
+                }*/
+
+               if (etSearch.getText().toString().trim().length()>0) {
+                   InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                   imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                   jobsListSearch();
+               }else{
+                   Utils.showSnackBar(MainActivity.this, clMain,"Please enter the text..", Snackbar.LENGTH_LONG,"Please enter the text..", null);
+               }
+            }
+        });
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etSearch.setFocusable(true);
+                etSearch.setCursorVisible(true);
+
             }
         });
 
-        etSearch.addTextChangedListener(new TextWatcher() {
-
+      /*  tvSearchText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                tempjob_list.clear();
-                for(Jobs jobs : jobsList){
-                    if(jobs.getTitle().toLowerCase().contains(cs) || jobs.getTitle().toUpperCase().contains(cs) ||
-                            jobs.getSnippet().toLowerCase().contains(cs) || jobs.getSnippet().toUpperCase().contains(cs)){
-                        tempjob_list.add(jobs);
-                    }
-                }
-                jobsAdapter = new JobsAdapter(MainActivity.this, tempjob_list, 0);
-                rvJobs.setAdapter(jobsAdapter);
-                rvJobs.setHasFixedSize(true);
-                rvJobs.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false));
-                rvJobs.setItemAnimator(new DefaultItemAnimator());
+            public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                jobsListSearch();
             }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                          int arg3) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-            }
-        });
+        });*/
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                etSearch.setText("");
                 jobsList(0);
             }
         });
@@ -220,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         tvTotalJobs = (TextView) findViewById(R.id.tvTotalJobs);
         etSearch=(EditText)findViewById(R.id.etSearch);
         ivSearch=(ImageView)findViewById(R.id.ivSearch);
+        //tvSearchText = (TextView) findViewById(R.id.tvSearchText);
     }
 
     private void initData() {
@@ -228,6 +230,9 @@ public class MainActivity extends AppCompatActivity {
         userDetailsPref = UserDetailsPref.getInstance();
         progressDialog = new ProgressDialog(this);
         Utils.initAdapter(this, jobsAdapter, rvJobs, false, swipeRefreshLayout);
+
+//        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+  //      imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
     @Override
@@ -962,6 +967,115 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }, delay);
+        }
+    }
+
+
+
+    public void jobsListSearch() {
+     //   swipeRefreshLayout.setRefreshing(true);
+        if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
+            jobsList.clear();
+            Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS_SEARCH +"/"+ etSearch.getText().toString(), true);
+            Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            StringRequest strRequest = new StringRequest(Request.Method.GET, AppConfigURL.JOBS_SEARCH +"/"+ etSearch.getText().toString(),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            userDetailsPref.putStringPref(MainActivity.this, UserDetailsPref.RESPONSE, response);
+                            Utils.showLog(Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+
+                                try {
+                                    JSONObject jsonObj = new JSONObject(response);
+                                    boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
+                                    String message = jsonObj.getString(AppConfigTags.MESSAGE);
+                                    if (!is_error) {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                        JSONArray jsonArrayJobs = jsonObj.getJSONArray(AppConfigTags.JOBS);
+                                        for (int i = 0; i < jsonArrayJobs.length(); i++) {
+                                            JSONObject jsonObjectJobs = jsonArrayJobs.getJSONObject(i);
+                                            jobsList.add(new Jobs(jsonObjectJobs.getInt(AppConfigTags.ID),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_ID),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_TITLE),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_BUDGET),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_SNIPPET),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_COUNTRY),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_SKILL),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_PAYMENT_VERIFICATION_STATUS),
+                                                    jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
+                                                    jsonObjectJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
+                                                    jsonObjectJobs.getString(AppConfigTags.JOB_URL),
+                                                    "",
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_MEMBER_SINCE),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_TOTAL_HOURS),
+                                                    jsonObjectJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT)
+
+                                            ));
+                                        }
+
+
+                                        jobsAdapter = new JobsAdapter(MainActivity.this, jobsList, 0);
+                                        rvJobs.setAdapter(jobsAdapter);
+                                        rvJobs.setHasFixedSize(true);
+                                        rvJobs.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false));
+                                        rvJobs.setItemAnimator(new DefaultItemAnimator());
+                                        progressDialog.dismiss();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                    progressDialog.dismiss();
+                                }
+                            } else {
+                                Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                progressDialog.dismiss();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Utils.showLog(Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString(), true);
+                            NetworkResponse response = error.networkResponse;
+                            if (response != null && response.data != null) {
+                                Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
+                            }
+                            Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                        }
+                    }) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new Hashtable<String, String>();
+                    Utils.showLog(Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    UserDetailsPref userDetailsPref = UserDetailsPref.getInstance();
+                    params.put(AppConfigTags.HEADER_API_KEY, Constants.api_key);
+                    params.put(AppConfigTags.HEADER_USER_LOGIN_KEY, userDetailsPref.getStringPref(MainActivity.this, UserDetailsPref.LOGIN_KEY));
+                    Utils.showLog(Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
+                    return params;
+                }
+            };
+            Utils.sendRequest(strRequest, 30);
+        } else {
+            Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
+                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(dialogIntent);
+                }
+            });
         }
     }
 }

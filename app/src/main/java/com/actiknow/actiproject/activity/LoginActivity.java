@@ -91,10 +91,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
         tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -294,11 +290,9 @@ public class LoginActivity extends AppCompatActivity {
                     Map<String, String> params = new Hashtable<String, String>();
                     params.put (AppConfigTags.USER_NAME, user_name);
                     params.put (AppConfigTags.PASSWORD, password);
-
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
-                
                 @Override
                 public Map<String, String> getHeaders () throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
@@ -319,7 +313,6 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
     }
-
     @Override
     public void onBackPressed () {
         Intent intent = new Intent();
