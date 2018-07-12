@@ -60,7 +60,9 @@
                     android:textSize="@dimen/text_size_medium"
                     android:textStyle="bold"
                     android:visibility="visible"
-                    android:background="@drawable/et_search_underline" />
+                    android:background="@drawable/et_search_underline"
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:cursorVisible="false"/>
 
                 <ImageView
                     android:id="@+id/ivSearch"

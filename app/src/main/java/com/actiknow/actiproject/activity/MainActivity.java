@@ -1,5 +1,6 @@
 package com.actiknow.actiproject.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         initView();
         initData();
         initAdapter();
@@ -143,16 +145,18 @@ public class MainActivity extends AppCompatActivity {
                if (etSearch.getText().toString().trim().length()>0) {
                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                   jobsListSearch();
+                   jobsListSearch(0);
                }else{
                    Utils.showSnackBar(MainActivity.this, clMain,"Please enter the text..", Snackbar.LENGTH_LONG,"Please enter the text..", null);
                }
             }
         });
+
         etSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etSearch.setFocusable(true);
+               //etSearch.setFocusable(true);
+
                 etSearch.setCursorVisible(true);
 
             }
@@ -231,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         Utils.initAdapter(this, jobsAdapter, rvJobs, false, swipeRefreshLayout);
 
+
 //        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
   //      imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
@@ -238,14 +243,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        final int delay = 20000; //milliseconds
-        handler.postDelayed(new Runnable() {
-            public void run() {
-        //        getJobId();
-                handler.postDelayed(this, delay);
-                }
-        }, delay);
-        }
+
+    }
 
     protected void onPause() {
         Log.d("onstop", "onstop");
@@ -268,8 +267,14 @@ public class MainActivity extends AppCompatActivity {
                 rvJobs.post(new Runnable() {
                     @Override
                     public void run() {
-                        int index = jobsList.size() - 1;
-                        jobsList(index + 1);
+                        if(etSearch.getText().toString().trim().length() > 0){
+                            int index = jobsList.size() - 1;
+                            jobsListSearch(index + 1);
+                        }else{
+                            int index = jobsList.size() - 1;
+                            jobsList(index + 1);
+                        }
+
                     }
                 });
             }
@@ -613,6 +618,7 @@ public class MainActivity extends AppCompatActivity {
                                         //  jobsAdapter.notifyDataSetChanged();
                                         jobsAdapter.notifyDataChanged();
                                         userDetailsPref.putStringPref(MainActivity.this, UserDetailsPref.JOB_LIST, String.valueOf(jobsList));
+                                        handler.removeCallbacksAndMessages(null);
                                         handler();
                                     } else {
                                         jobsAdapter.setMoreDataAvailable(true);
@@ -750,7 +756,7 @@ public class MainActivity extends AppCompatActivity {
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!error) {
                                         Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
-                                        jobsList(0);
+                                        //jobsList(0);
                                     } else {
                                         Utils.showSnackBar(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                     }
@@ -827,7 +833,7 @@ public class MainActivity extends AppCompatActivity {
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!error) {
                                         Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
-                                        jobsList(0);
+                                        //jobsList(0);
                                     } else {
                                         Utils.showSnackBar2(MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                                     }
@@ -973,13 +979,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void jobsListSearch() {
+    public void jobsListSearch(final int offset) {
      //   swipeRefreshLayout.setRefreshing(true);
         Log.e("search", "search");
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
-            jobsList.clear();
+            if (offset > 0) {
+                jobsList.add(new Jobs());
+                jobsAdapter.notifyItemInserted(jobsList.size() - 1);
+            }else{
+                Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            }
+           // jobsList.clear();
             Utils.showLog(Log.INFO, AppConfigTags.URL, AppConfigURL.JOBS_SEARCH, true);
-            Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+
             StringRequest strRequest = new StringRequest(Request.Method.POST, AppConfigURL.JOBS_SEARCH,
                     new Response.Listener<String>() {
                         @Override
@@ -993,6 +1005,13 @@ public class MainActivity extends AppCompatActivity {
                                     boolean is_error = jsonObj.getBoolean(AppConfigTags.ERROR);
                                     String message = jsonObj.getString(AppConfigTags.MESSAGE);
                                     if (!is_error) {
+                                        Log.e("JobList", "" + jobsList.size());
+                                        if (offset > 0) {
+                                            jobsList.remove(jobsList.size() - 1);
+                                        } else {
+                                            jobsAdapter.setMoreDataAvailable(true);
+                                            jobsList.clear();
+                                        }
                                         swipeRefreshLayout.setRefreshing(false);
                                         JSONArray jsonArrayJobs = jsonObj.getJSONArray(AppConfigTags.JOBS);
                                         for (int i = 0; i < jsonArrayJobs.length(); i++) {
@@ -1018,18 +1037,69 @@ public class MainActivity extends AppCompatActivity {
 
                                             ));
                                         }
+                                        if (jsonArrayJobs.length() == 0) {
+                                            jobsAdapter.setMoreDataAvailable(false);
+                                            Utils.showSnackBar(
+                                                    MainActivity.this,
+                                                    clMain, "No More Job available",
+                                                    Snackbar.LENGTH_LONG, "DISMISS",
+                                                    null);
+                                        }
+                                        //  jobsAdapter.notifyDataSetChanged();
                                         jobsAdapter.notifyDataChanged();
+                                        userDetailsPref.putStringPref(MainActivity.this, UserDetailsPref.JOB_LIST, String.valueOf(jobsList));
+                                        progressDialog.dismiss();
+                                        handler.removeCallbacksAndMessages(null);
+                                        handler();
+                                    } else {
+                                        jobsAdapter.setMoreDataAvailable(true);
+                                        Utils.showSnackBar(
+                                                MainActivity.this,
+                                                clMain,
+                                                "Error occurred",
+                                                Snackbar.LENGTH_INDEFINITE, "RETRY",
+                                                new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        jobsListSearch(offset);
+                                                    }
+                                                });
+
                                         progressDialog.dismiss();
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
-                                    progressDialog.dismiss();
+                                    if (offset > 0) {
+                                        jobsAdapter.setMoreDataAvailable(true);
+                                        Utils.showSnackBar(
+                                                MainActivity.this,
+                                                clMain, "Unable to fetch more_jobs",
+                                                Snackbar.LENGTH_INDEFINITE, "Retry",
+                                                new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        jobsListSearch(offset);
+                                                    }
+                                                });
+                                    }
                                 }
                             } else {
-                                Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
-                                Utils.showLog(Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
-                                progressDialog.dismiss();
+                                if (offset > 0) {
+                                    jobsAdapter.setMoreDataAvailable(true);
+                                    Utils.showSnackBar(
+                                            MainActivity.this,
+                                            clMain, "Unable to fetch more_jobs",
+                                            Snackbar.LENGTH_INDEFINITE, "Retry",
+                                            new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    jobsListSearch(offset);
+                                                }
+                                            });
+                                }
+                                    Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
+                                    progressDialog.dismiss();
+
                             }
                         }
                     },
@@ -1041,6 +1111,18 @@ public class MainActivity extends AppCompatActivity {
                             if (response != null && response.data != null) {
                                 Utils.showLog(Log.ERROR, AppConfigTags.ERROR, new String(response.data), true);
                             }
+                            if (offset > 0) {
+                                jobsAdapter.setMoreDataAvailable(true);
+                                Utils.showSnackBar(MainActivity.this, clMain, "Unable to fetch more_jobs", Snackbar.LENGTH_INDEFINITE, "Retry",
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                jobsListSearch(offset);
+                                            }
+                                        });
+                            } else {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
                             Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_dismiss), null);
                             progressDialog.dismiss();
                         }
@@ -1050,6 +1132,7 @@ public class MainActivity extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String>();
                     params.put(AppConfigTags.SEARCH_TEXT,etSearch.getText().toString());
+                    params.put("offset", String.valueOf(offset));
                     Utils.showLog(Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
@@ -1066,14 +1149,36 @@ public class MainActivity extends AppCompatActivity {
             };
             Utils.sendRequest(strRequest, 30);
         } else {
-            Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
-                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(dialogIntent);
-                }
-            });
+            if (offset > 0) {
+                jobsAdapter.setMoreDataAvailable(true);
+                Utils.showSnackBar(
+                        MainActivity.this,
+                        clMain, "Unable to fetch more_jobs",
+                        Snackbar.LENGTH_INDEFINITE, "Retry",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                jobsListSearch(offset);
+                            }
+                        });
+            } else {
+                Utils.showSnackBar(MainActivity.this, clMain, getResources().getString(R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources().getString(R.string.snackbar_action_go_to_settings), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent dialogIntent = new Intent(Settings.ACTION_SETTINGS);
+                        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(dialogIntent);
+                    }
+                });
+            }
         }
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 }
