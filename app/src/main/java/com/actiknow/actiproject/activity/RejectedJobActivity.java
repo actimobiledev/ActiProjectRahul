@@ -67,6 +67,7 @@ public class RejectedJobActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("onCreate","create");
         setContentView(R.layout.activity_rejected_jobs);
         initView();
         initData();
@@ -80,15 +81,41 @@ public class RejectedJobActivity extends AppCompatActivity {
 
 
     protected void onResume() {
+        Log.e("onResume","onResume");
         super.onResume();
         rejectedJobsList2(0);
     }
 
     protected void onPause() {
-        Log.d("onstop","onstop");
+        Log.e("onPause","onPause");
         handler.removeCallbacksAndMessages(null);
         super.onPause();
     }
+
+
+
+
+    @Override
+    protected void onStop() {
+        Log.e("onStop","stop");
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("onDestroy","destroy");
+        super.onDestroy();
+
+    }
+
+    @Override
+    protected void onStart() {
+        Log.e("onStart","start");
+        super.onStart();
+
+    }
+
 
     private void initListener() {
         ivBack.setOnClickListener(new View.OnClickListener() {
@@ -206,7 +233,7 @@ public class RejectedJobActivity extends AppCompatActivity {
 
     private void acceptJob (final String id, final String job_id) {
         if (NetworkConnection.isNetworkAvailable (RejectedJobActivity.this)) {
-            Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
+           // Utils.showProgressDialog (progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
             Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.ACCEPT_REJECTED_JOB, true);
             StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.ACCEPT_REJECTED_JOB,
                     new com.android.volley.Response.Listener<String> () {

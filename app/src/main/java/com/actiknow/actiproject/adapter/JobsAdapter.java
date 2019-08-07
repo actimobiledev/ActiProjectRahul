@@ -97,6 +97,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if(type == 2) {
                 viewHolder2.tvRejectedBy.setVisibility(View.VISIBLE);
                 viewHolder2.tvRejectedBy.setText("Rejected By: " + jobs.getRejected_by());
+            }else if (type == 1){
+                viewHolder2.tvRejectedBy.setVisibility(View.VISIBLE);
+                viewHolder2.tvRejectedBy.setText("Accepted By: " + jobs.getRejected_by());
             }
         }
     }

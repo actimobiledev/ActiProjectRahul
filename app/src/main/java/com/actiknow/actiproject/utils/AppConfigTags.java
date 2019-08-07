@@ -78,6 +78,7 @@ public class AppConfigTags {
     public static final String REJECTED_BY = "rejected_by";
     public static final String COUNT = "count";
     public static final String SEARCH_TEXT = "search_text";
+    public static final String ACCEPTED_BY = "accepted_by";
 
 
 }

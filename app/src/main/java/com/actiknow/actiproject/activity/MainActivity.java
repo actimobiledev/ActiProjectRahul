@@ -111,9 +111,11 @@ public class MainActivity extends AppCompatActivity {
     ImageView ivSearch;
     TextView tvSearchText;
     EditText etSearch;
+   // TextView tvScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("onCreate","onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -130,6 +132,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initListener() {
+      /*  tvScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this,RejectedJobActivity.class);
+                startActivity(intent);
+            }
+        });*/
 
         ivSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         ivNavigation = (ImageView) findViewById(R.id.ivNavigation);
       //  tvTotalItem = (TextView) findViewById(R.id.tvTotalItem);
         tvTotalJobs = (TextView) findViewById(R.id.tvTotalJobs);
+       // tvScan = (TextView) findViewById(R.id.tvScan);
         etSearch=(EditText)findViewById(R.id.etSearch);
         ivSearch=(ImageView)findViewById(R.id.ivSearch);
         //tvSearchText = (TextView) findViewById(R.id.tvSearchText);
@@ -242,14 +252,39 @@ public class MainActivity extends AppCompatActivity {
   //      imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
+
+
+
     @Override
     protected void onResume() {
+        Log.e("onResume","resume");
         super.onResume();
 
     }
 
+    @Override
+    protected void onStop() {
+        Log.e("onStop","stop");
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("onDestroy","destroy");
+        super.onDestroy();
+
+    }
+
+    @Override
+    protected void onStart() {
+        Log.e("onStart","start");
+        super.onStart();
+
+    }
+
     protected void onPause() {
-        Log.d("onstop", "onstop");
+        Log.e("onPause", "onPause");
         handler.removeCallbacksAndMessages(null);
         super.onPause();
     }
@@ -744,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void rejectJob(final String id, final String job_id) {
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
-            Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
             Utils.showLog(Log.INFO, "" + AppConfigTags.URL, AppConfigURL.REJECT_JOB, true);
             StringRequest strRequest1 = new StringRequest(Request.Method.POST, AppConfigURL.REJECT_JOB,
                     new com.android.volley.Response.Listener<String>() {
@@ -821,7 +856,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void acceptJob(final String id, final String job_id) {
         if (NetworkConnection.isNetworkAvailable(MainActivity.this)) {
-            Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
             Utils.showLog(Log.INFO, "" + AppConfigTags.URL, AppConfigURL.ACCEPT_JOB, true);
             StringRequest strRequest1 = new StringRequest(Request.Method.POST, AppConfigURL.ACCEPT_JOB,
                     new com.android.volley.Response.Listener<String>() {

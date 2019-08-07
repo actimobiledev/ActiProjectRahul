@@ -246,8 +246,6 @@ public class AcceptedJobActivity extends AppCompatActivity {
                                             acceptedJobsAdapter.setMoreDataAvailable(true);
                                             acceptedjobsList.clear();
                                         }
-
-
                                         JSONArray jsonArrayAcceptedJobs = jsonObj.getJSONArray(AppConfigTags.ACCEPTED_JOB);
                                         Log.e("AcceptedJobs", "" + jsonArrayAcceptedJobs.length());
                                         for (int i = 0; i < jsonArrayAcceptedJobs.length(); i++) {
@@ -263,7 +261,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
                                                     jsonObjectAcceptedJobs.getInt(AppConfigTags.JOB_JOB_POSTED),
                                                     jsonObjectAcceptedJobs.getInt(AppConfigTags.JOB_JOB_POST_HIRES),
                                                     jsonObjectAcceptedJobs.getString(AppConfigTags.JOB_URL),
-                                                    "",
+                                                    jsonObjectAcceptedJobs.getString(AppConfigTags.ACCEPTED_BY),
                                                     jsonObjectAcceptedJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_POSTED),
                                                     jsonObjectAcceptedJobs.getString(AppConfigTags.CLIENT_TOTAL_SPENT),
                                                     jsonObjectAcceptedJobs.getString(AppConfigTags.CLIENT_TOTAL_JOB_FILLED),
@@ -272,9 +270,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
                                                     jsonObjectAcceptedJobs.getString(AppConfigTags.CLIENT_JOB_PERCENT)
                                             ));
                                         }
-
                                         progressDialog.dismiss();
-
 
                                         if (jsonArrayAcceptedJobs.length() == 0) {
                                             acceptedJobsAdapter.setMoreDataAvailable(false);
@@ -287,8 +283,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
                                         // acceptedJobsAdapter.notifyDataSetChanged();
                                         acceptedJobsAdapter.notifyDataChanged();
                                         handler();
-
-                                    } else {
+                                        } else {
                                         acceptedJobsAdapter.setMoreDataAvailable(true);
                                         Utils.showSnackBar(AcceptedJobActivity.this, clMain, "Error occurred",
                                                 Snackbar.LENGTH_INDEFINITE, "RETRY",
@@ -409,7 +404,7 @@ public class AcceptedJobActivity extends AppCompatActivity {
 
     private void rejectJob(final String id, final String job_id) {
         if (NetworkConnection.isNetworkAvailable(AcceptedJobActivity.this)) {
-            Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
+            //Utils.showProgressDialog(progressDialog, getResources().getString(R.string.progress_dialog_text_please_wait), true);
             Utils.showLog(Log.INFO, "" + AppConfigTags.URL, AppConfigURL.REJECT_ACCEPTED_JOB, true);
             StringRequest strRequest1 = new StringRequest(Request.Method.POST, AppConfigURL.REJECT_ACCEPTED_JOB,
                     new com.android.volley.Response.Listener<String>() {
