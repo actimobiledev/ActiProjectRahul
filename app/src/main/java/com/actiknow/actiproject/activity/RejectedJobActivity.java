@@ -64,6 +64,9 @@ public class RejectedJobActivity extends AppCompatActivity {
     int count = 0;
     boolean first = true;
 
+
+    //updated
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
